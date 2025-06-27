@@ -1,0 +1,77 @@
+:root {
+  --primary-color: #007BFF;
+  --primary-hover: #0056b3;
+  --background-blur: rgba(255, 255, 255, 0.2);
+  --icon-color: white;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+.menu-container {
+  background: var(--background-blur);
+  backdrop-filter: blur(10px);
+  padding: 40px 20px;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+}
+.menu-container h1{
+  color: var(--primary-color);
+}
+
+.logout{
+  padding: 20px;
+  margin: 20px;
+  position: fixed;
+  top: 0;
+  right: 0;
+}
+
+.menu-item, .logout {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  color: var(--icon-color);
+  transition: transform 0.3s ease;
+}
+
+.menu-item i, .logout i {
+  background: var(--primary-color);
+  border-radius: 50%;
+  padding: 20px;
+  font-size: 24px;
+  margin-bottom: 10px;
+  transition: 0.3s ease;
+}
+
+.menu-item p, .logout p{
+  font-weight: bold;
+  color: black;
+}
+
+.menu-item:hover i,  .logout:hover i{
+  background: var(--primary-hover);
+}
+
+.menu-item:hover, .logout:hover {
+  transform: scale(1.1);
+}
+
+

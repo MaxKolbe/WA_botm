@@ -1,0 +1,213 @@
+:root {
+  --primary-color: #007BFF;
+  --primary-hover: #0056b3;
+  --background-blur: rgba(255, 255, 255, 0.2);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  backdrop-filter: blur(3px);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+}
+
+.container {
+  background: var(--background-blur);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+  width: 90%;
+  max-width: 1000px;
+  overflow-x: auto;
+}
+
+h2 {
+  color: var(--primary-color);
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ccc;
+  vertical-align: middle;
+}
+
+th {
+  color: var(--primary-color);
+  font-weight: bold;
+}
+
+td span {
+  display: inline-block;
+  max-width: 150px;
+  word-break: break-all;
+}
+
+.copy-btn {
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-left: 8px;
+  transition: 0.3s ease;
+  font-size: 14px;
+}
+
+.copy-btn:hover {
+  background: var(--primary-hover);
+}
+
+
+.back{
+  padding: 20px;
+  margin: 20px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  color: var(--icon-color);
+  transition: transform 0.3s ease;
+}
+
+.back i {
+  color: white;
+  background: var(--primary-color);
+  border-radius: 50%;
+  padding: 20px;
+  font-size: 24px;
+  margin-bottom: 10px;
+  transition: 0.3s ease;
+}
+
+.back:hover i{
+  background: var(--primary-hover);
+}
+
+.back:hover {
+  transform: scale(1.1);
+}
+
+.back p{
+  font-weight: bold;
+  color: black;
+}
+#toast {
+  height: 3rem;
+  visibility: hidden;
+  min-width: 200px;
+  background-color: #333;
+  color: #fff;
+  text-align: left;
+  border-radius: 6px;
+  padding: 12px;
+  position: fixed;
+  z-index: 9999;
+  bottom: 20px;  /* 👈 bottom instead of top */
+  left: 20px;    /* 👈 stays on the left */
+  font-size: 14px;
+  opacity: 0;
+  transition: opacity 0.5s, visibility 0.5s;
+}
+
+#toast.show {
+  visibility: visible;
+  opacity: 1;
+}
+
+/*MEDIA QUERIES*/
+@media (max-width: 768px) {
+  .container {
+    padding: 20px;
+  }
+
+  table, thead, tbody, th, td, tr {
+    display: block;
+    width: 100%;
+  }
+
+  thead {
+    display: none;
+  }
+
+  tr {
+    margin-bottom: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  }
+
+  td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #ccc;
+  }
+
+  td:last-child {
+    border-bottom: none;
+  }
+
+  td::before {
+    content: attr(data-label);
+    font-weight: bold;
+    color: var(--primary-color);
+    margin-right: 10px;
+  }
+
+  td span {
+    flex: 1;
+    text-align: right;
+    font-size: 14px;
+    word-break: break-word;
+  }
+
+  .copy-btn {
+    padding: 4px 8px;
+    font-size: 12px;
+    margin-left: 6px;
+  }
+   .back{
+    padding: 5px;
+    margin: 5px;
+    z-index: 1;
+    }
+
+    .back i {
+    padding: 16px;
+    font-size: 20px;
+    margin-bottom: 5px;
+
+    }
+
+    .back p{
+    font-weight: bold;
+    }
+    .container{
+      margin-top: 60px;
+    }
+
+}

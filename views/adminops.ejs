@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <script src="https://kit.fontawesome.com/5e2b46074f.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="/adminops.css">
+  <title>Admin Operations</title>
+</head>
+
+<body>
+    <% if (req.query.error === "Error occured while creating phrase") { %>
+        <span id="popup" style="color: red;"><h3><%= req.query.error%></h3></span>
+    <% } %>
+    <% if (req.query.error === "Error occured while managing employees") { %>
+        <span id="popup" style="color: red;"><h3><%= req.query.error%></h3></span>
+    <% } %>
+    <% if (req.query.error === "Otp does not exist") { %>
+        <span id="popup" style="color: red;"><h3><%= req.query.error%></h3></span>
+    <% } %>
+    <% if (req.query.message === "Phrase Updated") { %>
+        <span id="popup" style="color: green;"><h3><%= req.query.message%></h3></span>
+    <% } %>
+    <% if (req.query.message === "Otp created successfully") { %>
+        <span id="popup" style="color: green;"><h3><%= req.query.message%></h3></span>
+    <% } %>
+    <% if (req.query.message === "Employee added successfully") { %>
+        <span id="popup" style="color: green;"><h3><%= req.query.message%></h3></span>
+    <% } %>
+    <% if (req.query.message === "Employee deleted successfully") { %>
+        <span id="popup" style="color: orangered;"><h3><%= req.query.message%></h3></span>
+    <% } %>
+  <a href="/home" class="back">
+    <i class="fa-solid fa-backward"></i>
+    <p>Go Back</p>
+  </a>
+  <!-- Change OTP Phrase -->
+  <form class="form-card" action="/admin/change-phrase" method="POST">
+    <h3><i class="fas fa-key"></i> Change OTP Phrase</h3>
+    <input type="text" name="otpId" placeholder="OTP ID" required />
+    <input type="text" name="newPhrase" placeholder="New Phrase" required />
+    <button type="submit">Update Phrase</button>
+  </form>
+
+  <!-- Add or Remove Employee -->
+  <form class="form-card" action="/admin/manage-employee" method="POST">
+    <h3><i class="fas fa-user"></i> Manage Employee</h3>
+    <input type="text" name="name" placeholder="Employee Name" required />
+    <input type="text" name="phone" placeholder="Phone Number" required />
+    <select name="action" required>
+      <option value="">Select Action</option>
+      <option value="add">Add Employee</option>
+      <option value="remove">Remove Employee</option>
+    </select>
+    <button type="submit">Submit</button>
+  </form>
+
+  <!-- Add New OTP -->
+  <form class="form-card" action="/admin/add-otp" method="POST">
+    <h3><i class="fas fa-plus-circle"></i> Add New OTP</h3>
+    <input type="text" name="name" placeholder="OTP Name" required />
+    <input type="text" name="issuer" placeholder="Issuer (optional)" />
+    <input type="text" name="phrase" placeholder="Phrase" required />
+    <input type="text" name="secret" placeholder="Secret" required />
+    <button type="submit">Add OTP</button>
+  </form>
+
+<script>
+    // JavaScript to hide the error message after 3 seconds
+    window.onload = function() {
+        const popup = document.getElementById('popup')
+        // console.log("there is an error:", popup)
+        if (popup) {
+            setTimeout(() => {
+                popup.style.display = 'none'
+            }, 3000) // 3 seconds
+        }
+    }
+</script>
+</body>
+</html>

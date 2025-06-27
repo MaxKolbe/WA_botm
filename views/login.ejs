@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="/login.css">
+  <title>Admin Login</title>
+</head>
+
+<body>
+  <form method="POST" action="/login">
+    <% if (req.query.error === "Incorrect password love") { %>
+        <span id="popup"  style="color: red;"><h3><%= req.query.error%></h3></span>
+    <% } %>
+    <% if (req.query.error === "An error occurred during login") { %>
+        <span id="popup"  style="color: red;"><h3><%= req.query.error%></h3></span>
+    <% } %>
+    <% if (req.query.error === "Error authenticating user Login again") { %>
+        <span id="popup" style="color: red;"><h3><%= req.query.error%></h3></span>
+    <% } %>
+    <% if (req.query.message === "Logged out successfully") { %>
+        <span id="popup" style="color: green;"><h3><%= req.query.message%></h3></span>
+    <% } %>
+    <h2>Hello Michael, Please Log In</h2>
+    <input type="password" name="password" placeholder="Enter Password" required />
+    <button type="submit">Login</button>
+  </form>
+
+<script>
+// JavaScript to hide the error message after 3 seconds
+window.onload = function() {
+    const popup = document.getElementById('popup')
+    // console.log("there is an error:", popup)
+    if (popup) {
+        setTimeout(() => {
+            popup.style.display = 'none'
+        }, 3000) // 3 seconds
+    }
+}
+</script>
+</body>
+</html>
