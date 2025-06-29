@@ -14,6 +14,10 @@ const employeeSchema = mongoose.Schema({
     attempts: {
         type: Number, 
         default: 0
+    },
+    queried: {
+        type: Boolean, 
+        default: false   
     }
 })
 

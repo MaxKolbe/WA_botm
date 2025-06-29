@@ -1,5 +1,6 @@
 import otpModel from '../models/otpModel.js'
 import employeeModel from '../models/employeeModel.js'
+import settingsModel from '../models/settingsModel.js'
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
 dotenv.config()
@@ -57,8 +58,10 @@ export const viewUsers = async (req, res) => {
     }
 }
 
-export const viewAdminOps = (req, res) => {
-    res.render("adminops", {req})
+export const viewAdminOps = async (req, res) => {
+    const settings = await settingsModel.findOne()
+    const mode = settings.botEnabled
+    res.render("adminops", {req, mode})
 }
 
 export const changePhrase = async (req, res) => {
@@ -77,7 +80,9 @@ export const manageEmployee = async (req, res) => {
     const { name, phone, action } = req.body;
     try{
         if (action === "add") {
-            await employeeModel.create({ name, phone })
+            const cleanedPhoneNumber = phone.replace(/\p{Cf}/ug, ''); 
+
+            await employeeModel.create({ name, phone: `whatsapp:${cleanedPhoneNumber}` })
             res.redirect("/adminops?message=Employee+added+successfully")
         } else if (action === "remove") {
             await employeeModel.deleteOne({ phone })
@@ -97,6 +102,24 @@ export const addOtp = async (req, res) => {
     }catch(err){
         // console.log(err)
         res.redirect("/adminops?error=Error+occured+while+creating+phrase")
+    }
+}
+
+export const toggleBot = async (req, res) => {
+    try{
+        const { botEnabled } = req.body
+
+        const settings = await settingsModel.findOne()
+        if (settings) {
+            settings.botEnabled = botEnabled === 'true'
+            await settings.save()
+        } else {
+            await settingsModel.create({ botEnabled: botEnabled === 'true' })
+        }
+
+    return res.redirect('/adminops?message=Bot+status+updated+successfully');
+    }catch(err){
+        res.redirect("/adminops?error=Error+occured+while+toggling+bot")
     }
 }
 

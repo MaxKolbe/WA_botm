@@ -94,7 +94,9 @@ body {
   font-weight: bold;
   color: black;
 }
-
+.active{
+  font-size: 3rem;
+}
 
 /*MEDIA QUERIES*/
 @media (max-width: 768px) {

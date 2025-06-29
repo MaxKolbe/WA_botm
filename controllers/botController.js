@@ -1,32 +1,52 @@
 import employeeModel from '../models/employeeModel.js'
 import otpModel from '../models/otpModel.js'
+import settingsModel from '../models/settingsModel.js'
 import { sendAuthCode, sendWhatsAppMessage} from '../utils/botFunctions.js'
 import { generateCode } from '../utils/otpGenerator.js'
 
 export const botRequests = async (req, res) => {
   try {
+    const settings = await settingsModel.findOne()
     const message = req.body.Body?.trim().toUpperCase()
-    const sender = req.body.From
-
+    const sender = req.body.From.trim()
+    // console.log("sender is", sender)
     // Check if user exists
-    const user = await employeeModel.findOne({ phone: sender })
+    const user = await employeeModel.findOne({ phone: sender }).readConcern('majority');
+    const otpElement = await otpModel.findOne({ phrase: message })
 
     if (!user) {
       return res.send(`<Response><Message>No such employee found. Access denied.</Message></Response>`)
     }
 
+    if (user.queried === true) {
+      console.log("secret message to let you know bot got disabled")
+       setTimeout(async () => { 
+        user.queried = false
+        await user.save()
+        console.log(`[BOT] Auto-reset attempts for ${user.name}`)
+      }, 15 * 60 * 1000) // 15 mins
+      return
+    }
+
+     // Check bot enabled/disabled status
+    if (settings && !settings.botEnabled) {
+      user.queried = true
+      await user.save()
+      return res.send(`<Response><Message>The bot is currently disabled. Please try again later.</Message></Response>`)
+    } 
+    
     // Check if user is enabled or blocked due to attempts
     if (!user.enabled) {
       return res.send(`<Response><Message>You have exceeded the maximum attempts. Please wait 2 minutes before trying again.</Message></Response>`)
     }
 
     // Check if phrase exists
-    const otpElement = await otpModel.findOne({ phrase: message })
-
     if (!otpElement) {
       // Increment attempts on invalid phrase
+      console.log("no otp found")
       user.attempts += 1
-      return res.send(`<Response><Message>Invalid phrase.</Message></Response>`)
+      await user.save()
+      return res.send(`<Response><Message>Invalid phrase. Please send a valid phrase to receive an otp.</Message></Response>`)
     }
 
     // If attempts now exceed 2, disable and set reset timer
@@ -46,8 +66,8 @@ export const botRequests = async (req, res) => {
 
     // Valid phrase: Generate code
     const code = generateCode(otpElement.secret);
-    console.log(`[BOT] Sending code to ${user.name}: ${code}`);
-    sendAuthCode(user.name, sender, code);
+    console.log(`[BOT] Sending code to ${user.name}: ${code}`)
+    sendAuthCode(user.name, sender, code)
 
     // Increment attempts
     user.attempts += 1
@@ -67,3 +87,21 @@ export const botRequests = async (req, res) => {
     return res.send(`<Response><Message>An error occurred. Please try again later.</Message></Response>`)
   }
 }
+
+export const test = async (req, res) => {
+try{
+
+  // const user = await employeeModel.findOne({ phone: "" }).readConcern('majority');
+  // console.log("user1", user)
+
+  // user ? res.send(user) : res.send("No user found")
+ 
+}catch(err){
+   console.error(err)
+}
+}
+
+
+/*
+Beware of invisible strings [U+202A]
+*/
