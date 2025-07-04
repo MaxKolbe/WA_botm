@@ -9,7 +9,7 @@ const registeredSender = process.env.TWILIO_PHONE_NUMBER
 
 export const sendAuthCode = (employee, phoneNumber, code)=> {
   const message = client.messages.create({
-    body: `Hey ${employee}, your testcode is ${code}`,
+    body: `Hey ${employee}, your code is ${code}`,
     from: `${registeredSender}`, 
     to: `${phoneNumber}`, 
   })
