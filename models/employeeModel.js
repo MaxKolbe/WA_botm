@@ -22,6 +22,18 @@ const employeeSchema = mongoose.Schema({
     firsttime: {
         type: Boolean, 
         default: true   
+    },
+    firsttimeResetAt: { 
+        type: Date, 
+        default: null
+    },
+    queriedResetAt: { 
+        type: Date, 
+        default: null 
+    },
+    attemptsResetAt: { 
+        type: Date, 
+        default: null 
     }
 })
 
