@@ -52,6 +52,8 @@ Please enter a *phrase* to receive your one-time password (OTP).
 
 You can request up to 3 OTPs. After that, you'll need to wait for a period of time before trying again.
 
+Otps are valid for only 30secs. 
+
 If you message NenBot and you don't get a reply within a minute (NenBot is NOT disabled or you have NOT reached your usage limits), please resend your message to make sure it goes through.
   </Message>
 </Response>`)
