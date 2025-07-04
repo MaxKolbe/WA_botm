@@ -22,7 +22,7 @@ export const sendAuthCode = (employee, phoneNumber, code)=> {
 export const sendWhatsAppMessage = async (senderPhoneNumber, reply) => {
   const message = await client.messages.create({
     body: `${reply}`, 
-    from: "whatsapp:+14155238886", 
+    from: `${registeredSender}`, 
     to: `${senderPhoneNumber}`
   })
 

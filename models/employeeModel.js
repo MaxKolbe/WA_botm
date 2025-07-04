@@ -18,6 +18,10 @@ const employeeSchema = mongoose.Schema({
     queried: {
         type: Boolean, 
         default: false   
+    }, 
+    firsttime: {
+        type: Boolean, 
+        default: true   
     }
 })
 

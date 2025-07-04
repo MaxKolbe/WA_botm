@@ -1,5 +1,5 @@
 import express from 'express'
-import { botRequests, test } from '../controllers/botController.js'
+import { botRequests } from '../controllers/botController.js'
 import { getHome, getLoginPage, postLoginPage, logout, viewOtps, viewUsers, viewAdminOps, changePhrase, manageEmployee, addOtp, toggleBot} from '../controllers/adminController.js'
 import { verifyUser } from '../middleware/authenticateUser.js'
 
@@ -20,7 +20,7 @@ router.post("/admin/toggle-bot", verifyUser, toggleBot)
 
 // Webhook for Twilio  
 router.post("/webhook", botRequests)
-router.get("/test", test)
+// router.post("/test", test)
 
 
 export default router   

@@ -18,6 +18,33 @@ export const botRequests = async (req, res) => {
       return res.send(`<Response><Message>No such employee found. Access denied.</Message></Response>`)
     }
 
+    if(user.firsttime === true && !otpElement ){
+      res.send(`
+<Response>
+    <Message> 
+Hi there 👋 
+
+Welcome to NenBot! Here's how it works: 
+
+Please enter a *phrase* to receive your one-time password (OTP). 
+
+You can request up to 3 OTPs. After that, you'll need to wait for a period of time before trying again.  
+
+If you message NenBot and you don't get a reply within a minute (Nenbot is NOT disabled or You have NOT reached YOUR usage limits), please resend your message to make sure it goes through.  
+    </Message>
+</Response>`)
+
+      user.firsttime = false
+      await user.save()
+      
+      setTimeout(async () => { 
+        user.firsttime = true
+        await user.save()
+        console.log(`[BOT] Auto-reset attempts for ${user.name}`)
+      }, 24 *60 * 60 * 1000) // 24 hours
+      return
+    }
+
     if (user.queried === true) {
       console.log("secret message to let you know bot got disabled")
        setTimeout(async () => { 
@@ -36,8 +63,24 @@ export const botRequests = async (req, res) => {
     } 
     
     // Check if user is enabled or blocked due to attempts
-    if (!user.enabled) {
-      return res.send(`<Response><Message>You have exceeded the maximum attempts. Please wait 2 minutes before trying again.</Message></Response>`)
+    // Might be redundant. Check later
+    // if (!user.enabled) {
+    //   return res.send(`<Response><Message>You have exceeded the maximum attempts. Please wait 2 minutes before trying again.</Message></Response>`)
+    // }
+
+    // If attempts now exceed 2, disable and set reset timer
+    if (user.attempts > 2) {
+      user.enabled = false
+      await user.save()
+
+      setTimeout(async () => {
+        user.attempts = 0
+        user.enabled = true
+        await user.save()
+        console.log(`[BOT] Reset attempts for ${user.name}`)
+      }, 2 * 60 * 1000) // 2 mins
+
+      return res.send(`<Response><Message>You have exceeded the maximum attempts. Try again in 2 minutes.</Message></Response>`);
     }
 
     // Check if phrase exists
@@ -49,20 +92,6 @@ export const botRequests = async (req, res) => {
       return res.send(`<Response><Message>Invalid phrase. Please send a valid phrase to receive an otp.</Message></Response>`)
     }
 
-    // If attempts now exceed 2, disable and set reset timer
-    if (user.attempts > 2) {
-        user.enabled = false
-        await user.save()
-
-        setTimeout(async () => {
-            user.attempts = 0
-            user.enabled = true
-            await user.save()
-            console.log(`[BOT] Reset attempts for ${user.name}`)
-        }, 2 * 60 * 1000) // 2 mins
-
-        return res.send(`<Response><Message>You have exceeded the maximum attempts. Try again in 2 minutes.</Message></Response>`);
-    }
 
     // Valid phrase: Generate code
     const code = generateCode(otpElement.secret);
@@ -88,19 +117,13 @@ export const botRequests = async (req, res) => {
   }
 }
 
-export const test = async (req, res) => {
-try{
-
-  // const user = await employeeModel.findOne({ phone: "" }).readConcern('majority');
-  // console.log("user1", user)
-
-  // user ? res.send(user) : res.send("No user found")
+// export const test = async (req, res) => {
+// try{
  
-}catch(err){
-   console.error(err)
-}
-}
-
+// }catch(err){
+//    console.error(err)
+// }
+// }
 
 /*
 Beware of invisible strings [U+202A]

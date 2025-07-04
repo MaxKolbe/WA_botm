@@ -66,7 +66,7 @@ export const viewAdminOps = async (req, res) => {
 
 export const changePhrase = async (req, res) => {
     const { otpId, newPhrase } = req.body
-    const upNewPhrase = newPhrase.toUpperCase()
+    const upNewPhrase = newPhrase.replace(/\p{Cf}/ug, '').trim().toUpperCase()
     try{
         await otpModel.findByIdAndUpdate(otpId, { phrase: upNewPhrase })
         res.redirect("/adminops?message=Phrase+Updated")
@@ -80,7 +80,7 @@ export const manageEmployee = async (req, res) => {
     const { name, phone, action } = req.body;
     try{
         if (action === "add") {
-            const cleanedPhoneNumber = phone.replace(/\p{Cf}/ug, ''); 
+            const cleanedPhoneNumber = phone.replace(/\p{Cf}/ug, '')
 
             await employeeModel.create({ name, phone: `whatsapp:${cleanedPhoneNumber}` })
             res.redirect("/adminops?message=Employee+added+successfully")
@@ -97,7 +97,12 @@ export const manageEmployee = async (req, res) => {
 export const addOtp = async (req, res) => {
     try{
         const { name, issuer, phrase, secret } = req.body
-        await otpModel.create({ name, issuer, phrase, secret })
+        const cleanedName = name.replace(/\p{Cf}/ug, '') 
+        const cleanedIssuer = issuer.replace(/\p{Cf}/ug, '') 
+        const cleanedPhrase = phrase.replace(/\p{Cf}/ug, '') 
+        const cleanedSecret = secret.replace(/\p{Cf}/ug, '')
+
+        await otpModel.create({ name: cleanedName, issuer: cleanedIssuer, phrase: cleanedPhrase, secret: cleanedSecret })
         res.redirect("/adminops?message=Otp+created+successfully")
     }catch(err){
         // console.log(err)
