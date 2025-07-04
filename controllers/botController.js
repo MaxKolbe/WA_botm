@@ -93,7 +93,7 @@ If you message NenBot and you don't get a reply within a minute (NenBot is NOT d
 
     // Valid phrase: Generate and send OTP
     const code = generateCode(otpElement.secret)
-    console.log(`[BOT] Sending code to ${user.name}: ${code}`)
+    //console.log(`[BOT] Sending code to ${user.name}: ${code}`)
     sendAuthCode(user.name, sender, code)
 
     // Increment attempts and set/reset the cooldown timestamp
