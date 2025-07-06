@@ -48,7 +48,8 @@ export const viewOtps = async (req, res) => {
         // Get total number of documents for pagination controls
         const totalDocuments = await otpModel.countDocuments()
 
-        res.render("viewOtps", { otps, 
+        res.render("viewOtps", { req,
+            otps, 
             currentPage: page,
             totalPages: Math.ceil(totalDocuments / limit)
         })
@@ -68,7 +69,8 @@ export const viewUsers = async (req, res) => {
         // Get total number of documents for pagination controls
         const totalDocuments = await employeeModel.countDocuments()
 
-        res.render("viewEmployees", { employees, 
+        res.render("viewEmployees", { req, 
+            employees, 
             currentPage: page,
             totalPages: Math.ceil(totalDocuments / limit)
         })
@@ -151,50 +153,53 @@ export const toggleBot = async (req, res) => {
 //Search For Otps
 export const searchOtps = async (req, res) => {
     try { 
-        const { query } = req.body.trim() 
+        const { query } = req.body
+        const realQuery = query.trim() 
+
        
         //Check if query is empty
-        if (!query) {
+        if (!realQuery) {
             return res.redirect('/home')
         }
     
         //Search across fields using $or and $regex for partial matches
         const searchResults = await otpModel.find({
             $or: [ 
-                { name: { $regex: query, $options: 'i' } },
-                { secret: { $regex: query, $options: 'i' } },
-                { phrase: { $regex: query, $options: 'i' } }
+                { name: { $regex: realQuery, $options: 'i' } },
+                { secret: { $regex: realQuery, $options: 'i' } },
+                { phrase: { $regex: realQuery, $options: 'i' } }
             ]
         }) 
 
         res.render("otpSearchResults", {req, searchResults})
     } catch (err) {
         console.error(err)
-        res.status(500).redirect(`/home?error=error+during+search`)
+        res.status(500).redirect(`/otps?error=error+during+search`)
     }
 }
 
 //Search For Employees
 export const searchEmployees = async (req, res) => {
     try { 
-        const { query } = req.body.trim() 
+        const { query } = req.body 
+        const realQuery = query.trim() 
        
         //Check if query is empty
-        if (!query) {
+        if (!realQuery) {
             return res.redirect('/home')
         }
     
         //Search across fields using $or and $regex for partial matches
         const searchResults = await employeeModel.find({
             $or: [ 
-                { name: { $regex: query, $options: 'i' } },
-                { phone: { $regex: query, $options: 'i' } }
+                { name: { $regex: realQuery, $options: 'i' } },
+                { phone: { $regex: realQuery, $options: 'i' } }
             ]
-        }) 
-
+        })    
+ 
         res.render("employeeSearchResults", {req, searchResults})
     } catch (err) {
         console.error(err)
-        res.status(500).redirect(`/home?error=error+during+search`)
+        res.status(500).redirect(`/users?error=error+during+search`)
     }
 }

@@ -10,10 +10,18 @@
 </head>
 
 <body>
+   <% if (req.query.error === "error during search") { %>
+      <span id="popup"  style="color: red;"><h3><%= req.query.error%></h3></span>
+    <% } %>
+<div class="body">
   <a href="/home" class="back">
     <i class="fa-solid fa-backward"></i>
     <p>Go Back</p>
   </a>
+  <form class="search-bar" action="/searchOtps" method="POST">
+    <input type="text" name="query" placeholder="Search for an otp..." required>
+    <button type="submit">Search</button>
+  </form>
  <div id="toast"></div>
   <div class="container">
     <h2>All OTPs</h2>
@@ -72,9 +80,8 @@
         <% } %>
     </div>
   </div>
-
-   
-
+</div>
+  
   <script>
     function copyText(text) {
       navigator.clipboard.writeText(text).then(() => {
@@ -83,13 +90,24 @@
     }
 
     function showToast(message) {
-        const toast = document.getElementById("toast")
-        toast.textContent = message
-        toast.className = "show"
+      const toast = document.getElementById("toast")
+      toast.textContent = message
+      toast.className = "show"
+      setTimeout(() => {
+          toast.className = toast.className.replace("show", "")
+      }, 4000)
+    }
+
+    // JavaScript to hide the error message after 3 seconds
+    window.onload = function() {
+    const popup = document.getElementById('popup')
+    // console.log("there is an error:", popup)
+    if (popup) {
         setTimeout(() => {
-            toast.className = toast.className.replace("show", "")
-        }, 4000)
-        }
+            popup.style.display = 'none'
+        }, 3000) // 3 seconds
+    }
+}
   </script>
 </body>
 </html>

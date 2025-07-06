@@ -1,6 +1,6 @@
 import express from 'express'
 import { botRequests } from '../controllers/botController.js'
-import { getHome, getLoginPage, postLoginPage, logout, viewOtps, viewUsers, viewAdminOps, changePhrase, manageEmployee, addOtp, toggleBot} from '../controllers/adminController.js'
+import { getHome, getLoginPage, postLoginPage, logout, viewOtps, viewUsers, viewAdminOps, changePhrase, manageEmployee, addOtp, toggleBot, searchEmployees, searchOtps} from '../controllers/adminController.js'
 import { verifyUser } from '../middleware/authenticateUser.js'
 
 const router = express.Router() 
@@ -12,6 +12,8 @@ router.get("/home", verifyUser, getHome)
 router.get("/logout", verifyUser, logout)
 router.get("/otps", verifyUser, viewOtps)
 router.get("/users", verifyUser, viewUsers)
+router.post("/searchOtps", verifyUser, searchOtps)
+router.post("/searchEmployees", verifyUser, searchEmployees)
 router.get("/adminops", verifyUser, viewAdminOps)
 router.post("/admin/change-phrase", verifyUser, changePhrase)
 router.post("/admin/manage-employee", verifyUser, manageEmployee)

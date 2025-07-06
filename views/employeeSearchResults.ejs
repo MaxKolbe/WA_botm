@@ -9,13 +9,21 @@
   <title>View Employees</title>
 </head>
 <body>
-  <a href="/home" class="back">
+  <% if (req.query.error === "error during search") { %>
+      <span id="popup"  style="color: red;"><h3><%= req.query.error%></h3></span>
+  <% } %>
+<div class="body">
+  <a href="/users" class="back">
     <i class="fa-solid fa-backward"></i>
     <p>Go Back</p>
   </a>
+  <form class="search-bar" action="/searchEmployees" method="POST">
+    <input type="text" name="query" placeholder="Search for an employee..." required>
+    <button type="submit">Search</button>
+  </form>
   <div id="toast"></div>
   <div class="container">
-    <h2>All Employees</h2>
+    <h2>Employee Search Results</h2>
     <table>
       <thead>
         <tr>
@@ -25,7 +33,7 @@
         </tr>
       </thead>
       <tbody>
-        <% employees.forEach(employee => { %>
+        <% searchResults.forEach(employee => { %>
           <tr>
             <td data-label="ID">
               <span><%= employee._id %></span>
@@ -49,8 +57,10 @@
         <% }) %>
       </tbody>
     </table>
+        <!-- Pagination Controls -->
   </div>
 
+</div>
   <script>
     function copyText(text) {
       navigator.clipboard.writeText(text).then(() => {
@@ -66,6 +76,17 @@
         toast.className = toast.className.replace("show", "")
       }, 4000)
     }
+
+    // JavaScript to hide the error message after 3 seconds
+window.onload = function() {
+    const popup = document.getElementById('popup')
+    // console.log("there is an error:", popup)
+    if (popup) {
+        setTimeout(() => {
+            popup.style.display = 'none'
+        }, 3000) // 3 seconds
+    }
+}
   </script>
 </body>
 </html>
