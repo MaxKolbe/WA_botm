@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <script src="https://kit.fontawesome.com/5e2b46074f.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="/viewotps.css">
+  <link rel="shortcut icon" href="/bitimg.png" type="image/x-icon">
+  <title>View OTPs</title>
+</head>
+
+<body>
+  <a href="/home" class="back">
+    <i class="fa-solid fa-backward"></i>
+    <p>Go Back</p>
+  </a>
+ <div id="toast"></div>
+  <div class="container">
+    <h2>All OTPs</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Phrase</th>
+          <th>Secret</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% otps.forEach(otp => { %>
+          <tr>
+            <td data-label="ID">
+              <span><%= otp._id %></span>
+              <button class="copy-btn" onclick="copyText('<%= otp._id %>')">
+                <i class="fas fa-copy"></i>
+              </button>
+            </td>
+            <td data-label="Name">
+              <span><%= otp.name %></span>
+              <button class="copy-btn" onclick="copyText('<%= otp.name %>')">
+                <i class="fas fa-copy"></i>
+              </button>
+            </td>
+            <td data-label="Phrase">
+              <span><%= otp.phrase %></span>
+              <button class="copy-btn" onclick="copyText('<%= otp.phrase %>')">
+                <i class="fas fa-copy"></i>
+              </button>
+            </td>
+            <td data-label="Secret">
+              <span><%= otp.secret %></span>
+              <button class="copy-btn" onclick="copyText('<%= otp.secret %>')">
+                <i class="fas fa-copy"></i>
+              </button>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    function copyText(text) {
+      navigator.clipboard.writeText(text).then(() => {
+        showToast(`Copied: ${text}`)
+      })
+    }
+
+    function showToast(message) {
+        const toast = document.getElementById("toast")
+        toast.textContent = message
+        toast.className = "show"
+        setTimeout(() => {
+            toast.className = toast.className.replace("show", "")
+        }, 4000)
+        }
+  </script>
+</body>
+</html>

@@ -135,6 +135,20 @@ td span {
   opacity: 1;
 }
 
+/*PAGINATION*/ 
+.pagination{
+  margin-top: 2rem;
+}
+.pagination a{
+  text-decoration: none;
+  color: white;
+  padding: 0.4rem;
+  background-color: var(--primary-color);
+}
+.pagination a:hover{
+  background-color: var(--primary-hover);
+}
+
 /*MEDIA QUERIES*/
 @media (max-width: 768px) {
   .container {

@@ -39,9 +39,19 @@ export const getHome = (req, res) => {
 }
 
 export const viewOtps = async (req, res) => {
+    const page = parseInt(req.query.page) || 1 // Default to page 1 if no query parameter
+    const limit = 10 // Limit the number of documents per page
+    const skip = (page - 1) * limit // Calculate the number of documents to skip
+
     try {
-        const otps = await otpModel.find()
-        res.render("viewOtps", { otps })
+        const otps = await otpModel.find().sort({ createdAt: -1 }).skip(skip).limit(limit)
+        // Get total number of documents for pagination controls
+        const totalDocuments = await otpModel.countDocuments()
+
+        res.render("viewOtps", { otps, 
+            currentPage: page,
+            totalPages: Math.ceil(totalDocuments / limit)
+        })
     } catch (err) {
         console.error(err) 
         res.status(500).send("Error fetching OTPs.")
@@ -49,9 +59,19 @@ export const viewOtps = async (req, res) => {
 }
 
 export const viewUsers = async (req, res) => {
-        try {
-        const employees = await employeeModel.find()
-        res.render("viewEmployees", { employees })
+    const page = parseInt(req.query.page) || 1 // Default to page 1 if no query parameter
+    const limit = 10 // Limit the number of documents per page
+    const skip = (page - 1) * limit // Calculate the number of documents to skip
+
+    try {
+        const employees = await employeeModel.find().sort({ createdAt: -1 }).skip(skip).limit(limit)
+        // Get total number of documents for pagination controls
+        const totalDocuments = await employeeModel.countDocuments()
+
+        res.render("viewEmployees", { employees, 
+            currentPage: page,
+            totalPages: Math.ceil(totalDocuments / limit)
+        })
     } catch (err) {
         console.error(err) 
         res.status(500).send("Error fetching employees.")
@@ -128,4 +148,53 @@ export const toggleBot = async (req, res) => {
     }
 }
 
+//Search For Otps
+export const searchOtps = async (req, res) => {
+    try { 
+        const { query } = req.body.trim() 
+       
+        //Check if query is empty
+        if (!query) {
+            return res.redirect('/home')
+        }
+    
+        //Search across fields using $or and $regex for partial matches
+        const searchResults = await otpModel.find({
+            $or: [ 
+                { name: { $regex: query, $options: 'i' } },
+                { secret: { $regex: query, $options: 'i' } },
+                { phrase: { $regex: query, $options: 'i' } }
+            ]
+        }) 
 
+        res.render("otpSearchResults", {req, searchResults})
+    } catch (err) {
+        console.error(err)
+        res.status(500).redirect(`/home?error=error+during+search`)
+    }
+}
+
+//Search For Employees
+export const searchEmployees = async (req, res) => {
+    try { 
+        const { query } = req.body.trim() 
+       
+        //Check if query is empty
+        if (!query) {
+            return res.redirect('/home')
+        }
+    
+        //Search across fields using $or and $regex for partial matches
+        const searchResults = await employeeModel.find({
+            $or: [ 
+                { name: { $regex: query, $options: 'i' } },
+                { phone: { $regex: query, $options: 'i' } }
+            ]
+        }) 
+
+        res.render("employeeSearchResults", {req, searchResults})
+    } catch (err) {
+        console.error(err)
+        res.status(500).redirect(`/home?error=error+during+search`)
+    }
+}

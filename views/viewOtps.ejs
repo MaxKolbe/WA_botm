@@ -57,7 +57,23 @@
         <% }) %>
       </tbody>
     </table>
+     <!-- Pagination Controls -->
+    <div class="pagination">
+        <% if (currentPage > 1) { %>
+            <a href="/otps?page=<%= currentPage - 1 %>">Previous</a>
+        <% } %>
+        
+        <% for (let i = 1; i <= totalPages; i++) { %>
+            <a href="/otps?page=<%= i %>" class="<%= currentPage === i ? 'active' : '' %>"><%= i %></a>
+        <% } %>
+        
+        <% if (currentPage < totalPages) { %>
+            <a href="/otps?page=<%= currentPage + 1 %>">Next</a>
+        <% } %>
+    </div>
   </div>
+
+   
 
   <script>
     function copyText(text) {
