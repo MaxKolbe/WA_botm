@@ -6,6 +6,8 @@ import dotenv from 'dotenv'
 dotenv.config()
 
 const app = express()
+const PORT = process.env.PORT || 3000
+
 app.use(express.json()) // For parsing JSON bodies
 app.use(express.urlencoded({ extended: true })) // For parsing URL-encoded form data
 app.set("view engine", "ejs") // setting view engine
@@ -23,6 +25,6 @@ mongoose.connect(process.env.MONGODB_URL)
 
 app.use("/", router)
 
-app.listen(process.env.PORT, () => {
+app.listen(PORT, () => {
   console.log(`Server running on port ${process.env.PORT}`)
 })
