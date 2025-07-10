@@ -146,6 +146,7 @@ td span {
   color: white;
   padding: 0.4rem;
   background-color: var(--primary-color);
+  margin: 0.8rem 0;
 }
 .pagination a:hover{
   background-color: var(--primary-hover);
@@ -181,6 +182,7 @@ td span {
 .search-bar button:hover {
   background-color: var(--primary-hover);
 }
+
 /*MEDIA QUERIES*/
 @media (max-width: 768px) {
   .container {

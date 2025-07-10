@@ -1,6 +1,7 @@
 import employeeModel from '../models/employeeModel.js'
 import otpModel from '../models/otpModel.js'
 import settingsModel from '../models/settingsModel.js'
+import otpUsageModel from '../models/otpUsageModel.js'
 import { sendAuthCode, sendWhatsAppMessage} from '../utils/botFunctions.js'
 import { generateCode } from '../utils/otpGenerator.js'
 
@@ -103,8 +104,17 @@ If you message NenBot and you don't get a reply within a minute (NenBot is NOT d
     if (!user.attemptsResetAt) {
       user.attemptsResetAt = new Date(Date.now() + 5 * 60 * 1000) // 5 mins from now
     }
-    await user.save()
 
+    const usage = await otpUsageModel.create({
+      user: user._id,
+      otpName: otpElement.name,
+      // loginConfirmed: false
+    })
+
+    // Link usage to user
+    user.otpLogs.push(usage._id)
+    
+    await user.save()
     return
 
   } catch (err) {

@@ -16,7 +16,10 @@
       <% if (req.query.error === "Error occured while toggling bot") { %>
         <span id="popup" style="color: red;"><h3><%= req.query.error%></h3></span>
     <% } %>
-    <% if (req.query.error === "Error occured while managing employees") { %>
+    <% if (req.query.error === "Error occured while adding employees") { %>
+        <span id="popup" style="color: red;"><h3><%= req.query.error%></h3></span>
+    <% } %>
+    <% if (req.query.error === "Error occured while removing employees") { %>
         <span id="popup" style="color: red;"><h3><%= req.query.error%></h3></span>
     <% } %>
     <% if (req.query.error === "Otp does not exist") { %>
@@ -32,7 +35,7 @@
         <span id="popup" style="color: green;"><h3><%= req.query.message%></h3></span>
     <% } %>
     <% if (req.query.message === "Employee deleted successfully") { %>
-        <span id="popup" style="color: orangered;"><h3><%= req.query.message%></h3></span>
+        <span id="popup" style="color: green;"><h3><%= req.query.message%></h3></span>
     <% } %>
      <% if (req.query.message === "Bot status updated successfully") { %>
         <span id="popup" style="color: blue;"><h3><%= req.query.message%></h3></span>
@@ -49,17 +52,24 @@
     <button type="submit">Update Phrase</button>
   </form>
 
-  <!-- Add or Remove Employee -->
-  <form class="form-card" action="/admin/manage-employee" method="POST">
-    <h3><i class="fas fa-user"></i> Manage Employee</h3>
+  <!-- Add -->
+  <form class="form-card" action="/admin/add-employee" method="POST">
+    <h3><i class="fa-solid fa-user-plus"></i> Add Employee</h3>
     <input type="text" name="name" placeholder="Employee Name" required />
     <input type="text" name="phone" placeholder="+CountryCode PhoneNumber" required />
-    <select name="action" required>
-      <option value="">Select Action</option>
-      <option value="add">Add Employee</option>
-      <option value="remove">Remove Employee</option>
+    <button type="submit">Add Employee</button>
+  </form>
+
+  <!-- Remove Employee -->
+  <form class="form-card" action="/admin/remove-employee" method="POST">
+    <h3><i class="fa-solid fa-user-minus"></i> Remove Employee</h3>
+    <select name="user" id="employee" required>
+      <option value="">-- Select an Employee --</option>
+      <% employees.forEach(emp => { %>
+        <option value="<%= emp._id %>"><%= emp.name %></option>
+      <% }) %>
     </select>
-    <button type="submit">Submit</button>
+    <button type="submit">Remove</button>
   </form>
 
   <!-- Add New OTP -->

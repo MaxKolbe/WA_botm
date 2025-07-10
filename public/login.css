@@ -46,6 +46,12 @@ form input[type="password"] {
   margin-bottom: 20px;
 }
 
+form input[type="password"]:focus{
+  outline: none;
+  border: 1.4px solid var(--primary-color);
+  transition: .3s;
+}
+
 form button {
   width: 100%;
   padding: 10px;

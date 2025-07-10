@@ -1,6 +1,8 @@
+//ADD RESTURN RES.
 import otpModel from '../models/otpModel.js'
 import employeeModel from '../models/employeeModel.js'
 import settingsModel from '../models/settingsModel.js'
+import otpUsageModel from '../models/otpUsageModel.js'
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
 dotenv.config()
@@ -82,8 +84,9 @@ export const viewUsers = async (req, res) => {
 
 export const viewAdminOps = async (req, res) => {
     const settings = await settingsModel.findOne()
+    const employees = await employeeModel.find().sort({ name: 1 })
     const mode = settings.botEnabled
-    res.render("adminops", {req, mode})
+    res.render("adminops", {req, mode, employees})
 }
 
 export const changePhrase = async (req, res) => {
@@ -98,21 +101,28 @@ export const changePhrase = async (req, res) => {
     }
 }
 
-export const manageEmployee = async (req, res) => {
-    const { name, phone, action } = req.body;
+export const addEmployee = async (req, res) => {
+    const { name, phone } = req.body;
     try{
-        if (action === "add") {
-            const cleanedPhoneNumber = phone.replace(/\p{Cf}/ug, '')
+        const cleanedPhoneNumber = phone.replace(/\p{Cf}/ug, '')
 
-            await employeeModel.create({ name, phone: `whatsapp:${cleanedPhoneNumber}` })
-            res.redirect("/adminops?message=Employee+added+successfully")
-        } else if (action === "remove") {
-            await employeeModel.deleteOne({ phone })
-            res.redirect("/adminops?message=Employee+deleted+successfully")
-        }
+        await employeeModel.create({ name, phone: `whatsapp:${cleanedPhoneNumber}` })
+        res.redirect("/adminops?message=Employee+added+successfully")
     }catch(err){
         // console.log(err)
-        res.redirect("/adminops?error=Error+occured+while+managing+employees")
+        res.redirect("/adminops?error=Error+occured+while+adding+employees")
+    }
+}
+
+export const removeEmployee = async (req, res) => {
+    const { user } = req.body
+    try{
+       await employeeModel.findByIdAndDelete(user)
+
+       res.redirect("/adminops?message=Employee+deleted+successfully")
+    }catch(err){
+        // console.log(err)
+        res.redirect("/adminops?error=Error+occured+while+removing+employees")
     }
 }
 
@@ -121,7 +131,7 @@ export const addOtp = async (req, res) => {
         const { name, issuer, phrase, secret } = req.body
         const cleanedName = name.replace(/\p{Cf}/ug, '') 
         const cleanedIssuer = issuer.replace(/\p{Cf}/ug, '') 
-        const cleanedPhrase = phrase.replace(/\p{Cf}/ug, '') 
+        const cleanedPhrase = phrase.replace(/\p{Cf}/ug, '').toUpperCase()
         const cleanedSecret = secret.replace(/\p{Cf}/ug, '')
 
         await otpModel.create({ name: cleanedName, issuer: cleanedIssuer, phrase: cleanedPhrase, secret: cleanedSecret })
@@ -159,7 +169,7 @@ export const searchOtps = async (req, res) => {
        
         //Check if query is empty
         if (!realQuery) {
-            return res.redirect('/home')
+            return res.redirect('/otps')
         }
     
         //Search across fields using $or and $regex for partial matches
@@ -186,7 +196,7 @@ export const searchEmployees = async (req, res) => {
        
         //Check if query is empty
         if (!realQuery) {
-            return res.redirect('/home')
+            return res.redirect('/users')
         }
     
         //Search across fields using $or and $regex for partial matches
@@ -202,4 +212,86 @@ export const searchEmployees = async (req, res) => {
         console.error(err)
         res.status(500).redirect(`/users?error=error+during+search`)
     }
+}
+
+export const viewEmployeeLogs = async (req, res) => {
+    const page = parseInt(req.query.page) || 1 // Default to page 1 if no query parameter
+    const limit = 10 // Limit the number of documents per page
+    const skip = (page - 1) * limit // Calculate the number of documents to skip
+
+    try{
+        const logs = await otpUsageModel.find().sort({ createdAt: -1 }).skip(skip).limit(limit).populate("user")
+        // Get total number of documents for pagination controls
+        const totalDocuments = await otpUsageModel.countDocuments()
+         
+        res.render("employeeLogs", {req,   
+            logs,    
+            currentPage: page,
+            totalPages: Math.ceil(totalDocuments / limit)
+        })
+    }catch(err){
+        res.status(500).redirect(`/home`)
+    } 
+}
+
+export const deleteOneLog = async (req, res) => {
+    try{
+        const { id } = req.params
+
+        const log = await otpUsageModel.findById(id)
+
+        // Remove the log reference from the associated user
+        await employeeModel.findByIdAndUpdate(log.user, {
+            $pull: { otpLogs: log._id }
+        })
+
+        // Delete the log itself
+        await otpUsageModel.findByIdAndDelete(id)
+
+        res.redirect('/employeelog?message=Deleted+log+successfully')
+    }catch(err){
+        res.status(500).redirect(`/employeelog?error=error+deleting+log`)
+    }
+}
+
+export const deleteAllLogs = async (req, res) => {
+    try{
+        //  Delete all logs from the usage collection
+        await otpUsageModel.deleteMany({})
+
+        // Remove all references from every user
+        await employeeModel.updateMany({}, { $set: { otpLogs: [] } })
+
+        res.redirect('/employeelog?message=Deleted+all+logs+successfully')
+    }catch(err){
+        res.status(500).redirect(`/employeelog?error=error+deleting+all+logs`)
+    }
+}
+
+//Search logs
+export const searchLogs = async (req, res) => {
+    res.redirect(`/employeelog?message=Searching+is+not+available+yet`)
+    // try { 
+    //     const { query } = req.body
+    //     const realQuery = query.trim() 
+
+       
+    //     //Check if query is empty
+    //     if (!realQuery) {
+    //         return res.redirect('/employeelog')
+    //     }
+    
+    //     //Search across fields using $or and $regex for partial matches
+    //     const searchResults = await otpUsageModel.find({
+    //         $or: [ 
+                
+    //             { otpName: { $regex: realQuery, $options: 'i' } }
+    //         ]
+    //     })
+
+    //     res.render("employeeLogSearchResults", {req, searchResults})
+    // } catch (err) {
+    //     console.error(err)
+    //     res.status(500).redirect(`/employeelog?error=error+during+search`)
+    // }
 }

@@ -2,6 +2,7 @@ import express from 'express'
 import mongoose from 'mongoose'
 import router from './routes/routes.js'
 import cookieParser from 'cookie-parser'
+import methodOverride from 'method-override'
 import dotenv from 'dotenv'
 dotenv.config()
 
@@ -14,6 +15,7 @@ app.set("view engine", "ejs") // setting view engine
 app.set('views', 'views') // setting views folder
 app.use(express.static('public'))
 app.use(cookieParser())
+app.use(methodOverride("_method")) // Overide form to enable DELETE
 
 // Database connection
 mongoose.connect(process.env.MONGODB_URL)

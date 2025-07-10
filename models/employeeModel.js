@@ -34,7 +34,11 @@ const employeeSchema = mongoose.Schema({
     attemptsResetAt: { 
         type: Date, 
         default: null 
-    }
+    },
+    otpLogs: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'otpUsage'
+    }]
 })
 
 export default mongoose.model("employees", employeeSchema)
