@@ -170,9 +170,9 @@ td span {
 
 
 /*PAGINATION*/ 
-.pagination{
+/* .pagination{
   margin-top: 2rem;
-}
+} */
 .pagination a{
   text-decoration: none;
   color: white;
