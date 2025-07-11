@@ -13,6 +13,9 @@ const otpSchema = mongoose.Schema({
     issuer: {
         type: String
     }
+},
+{
+    timestamps: true
 })
 
 export default mongoose.model("otps", otpSchema)

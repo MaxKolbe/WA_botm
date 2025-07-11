@@ -57,20 +57,17 @@
         <% }) %>
       </tbody>
     </table>
-         <!-- Pagination Controls -->
+    <!-- Pagination Controls -->
     <div class="pagination">
-        <% if (currentPage > 1) { %>
-            <a href="/users?page=<%= currentPage - 1 %>">Previous</a>
-        <% } %>
-        
-        <% for (let i = 1; i <= totalPages; i++) { %>
-            <a href="/users?page=<%= i %>" class="<%= currentPage === i ? 'active' : '' %>"><%= i %></a>
-        <% } %>
-        
-        <% if (currentPage < totalPages) { %>
-            <a href="/users?page=<%= currentPage + 1 %>">Next</a>
-        <% } %>
-    </div>
+      <a href="/users?page=1">First</a>
+      <% if (currentPage > 1) { %>
+          <a href="/users?page=<%= currentPage - 1 %>">Previous</a>
+      <% } %>
+      <% if (currentPage < totalPages) { %>
+          <a href="/users?page=<%= currentPage + 1 %>">Next</a>
+      <% } %>
+      <a href="/users?page=<%= totalPages %>">Last</a>
+  </div>
   </div>
 
 </div>

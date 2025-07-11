@@ -61,7 +61,7 @@
   </form>
 
   <!-- Remove Employee -->
-  <form class="form-card" action="/admin/remove-employee" method="POST">
+  <form class="form-card" action="/admin/remove-employee" method="POST" onsubmit="return confirmDelete()">
     <h3><i class="fa-solid fa-user-minus"></i> Remove Employee</h3>
     <select name="user" id="employee" required>
       <option value="">-- Select an Employee --</option>
@@ -103,6 +103,10 @@
                 popup.style.display = 'none'
             }, 3000) // 3 seconds
         }
+    }
+
+    function confirmDelete() {
+      return confirm("Are you sure you want to delete this? This action is permanent and cannot be undone.")
     }
 </script>
 </body>

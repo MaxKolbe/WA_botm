@@ -67,7 +67,7 @@ export const viewUsers = async (req, res) => {
     const skip = (page - 1) * limit // Calculate the number of documents to skip
 
     try {
-        const employees = await employeeModel.find().sort({ createdAt: -1 }).skip(skip).limit(limit)
+        const employees = await employeeModel.find().sort({ name: 1 }).skip(skip).limit(limit)
         // Get total number of documents for pagination controls
         const totalDocuments = await employeeModel.countDocuments()
 
@@ -218,7 +218,7 @@ export const viewEmployeeLogs = async (req, res) => {
     const page = parseInt(req.query.page) || 1 // Default to page 1 if no query parameter
     const limit = 10 // Limit the number of documents per page
     const skip = (page - 1) * limit // Calculate the number of documents to skip
-
+     
     try{
         const logs = await otpUsageModel.find().sort({ createdAt: -1 }).skip(skip).limit(limit).populate("user")
         // Get total number of documents for pagination controls

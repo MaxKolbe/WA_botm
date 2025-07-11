@@ -137,39 +137,6 @@ td span {
   opacity: 1;
 }
 
-/*PAGINATION*/ 
-.pagination{
-  margin-top: 2rem;
-}
-.pagination a{
-  text-decoration: none;
-  color: white;
-  padding: 0.4rem;
-  background-color: var(--primary-color);
-  margin: 0.8rem 0;
-}
-.pagination a:hover{
-  background-color: var(--primary-hover);
-}
-.bottom-space{
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.delete-all-btn{
-  background-color: green;
-  color: white;
-  font-weight: bold;
-  border: none;
-  border-radius: 4px;
-  padding: 6px;
-  margin-top: 2rem;
-  transition: .3s;
-}
-.delete-all-btn:hover{
-  transform: scale(1.1);
-}
-
 /*SEARCH BAR*/ 
 .search-bar {
   display: flex;
@@ -199,6 +166,41 @@ td span {
 }
 .search-bar button:hover {
   background-color: var(--primary-hover);
+}
+
+
+/*PAGINATION*/ 
+.pagination{
+  margin-top: 2rem;
+}
+.pagination a{
+  text-decoration: none;
+  color: white;
+  padding: 0.4rem;
+  background-color: var(--primary-color);
+  margin: 0.4rem 0;
+}
+.pagination a:hover{
+  background-color: var(--primary-hover);
+}
+.bottom-space{
+  display: flex;
+  flex-wrap: wrap-reverse;
+  justify-content: space-between;
+  align-items: center;
+}
+.delete-all-btn{
+  background-color: green;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 4px;
+  padding: 6px;
+  margin-top: 2rem;
+  transition: .3s;
+}
+.delete-all-btn:hover{
+  transform: scale(1.1);
 }
 
 /*MEDIA QUERIES*/
@@ -263,4 +265,13 @@ td span {
   .back p{
     font-weight: bold;
   }
+}
+@media (max-width: 460px) {
+.pagination{
+  margin-top: 1.2rem;
+}
+.delete-all-btn{
+  padding: 6px;
+  margin: 1.2rem 0;
+}
 }

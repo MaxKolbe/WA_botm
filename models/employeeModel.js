@@ -39,6 +39,10 @@ const employeeSchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'otpUsage'
     }]
-})
+},
+{
+    timestamps: true
+}
+)
 
 export default mongoose.model("employees", employeeSchema)
