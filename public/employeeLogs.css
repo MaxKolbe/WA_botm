@@ -170,15 +170,14 @@ td span {
 
 
 /*PAGINATION*/ 
-/* .pagination{
-  margin-top: 2rem;
-} */
+.pagination{
+  margin-top: 1rem;
+}
 .pagination a{
   text-decoration: none;
   color: white;
   padding: 0.4rem;
   background-color: var(--primary-color);
-  margin: 0.4rem 0;
 }
 .pagination a:hover{
   background-color: var(--primary-hover);
@@ -196,7 +195,7 @@ td span {
   border: none;
   border-radius: 4px;
   padding: 6px;
-  margin-top: 2rem;
+  margin-top: 0.6rem;
   transition: .3s;
 }
 .delete-all-btn:hover{
