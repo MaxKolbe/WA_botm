@@ -36,7 +36,7 @@ router.post("/searchEmployees", verifyUser, searchEmployees)
 router.get("/employeelog", verifyUser, viewEmployeeLogs)
 router.delete("/deleteOneLog/:id", verifyUser, deleteOneLog)
 router.delete("/deleteAllLogs", verifyUser, deleteAllLogs)
-router.post("/searchLogs", verifyUser, searchLogs)
+router.get("/searchLogs", verifyUser, searchLogs)
 
 // Admin Operation Routes
 router.get("/adminops", verifyUser, viewAdminOps)

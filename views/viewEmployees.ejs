@@ -27,7 +27,7 @@
     <table>
       <thead>
         <tr>
-          <th>ID</th>
+          <!-- <th>ID</th> -->
           <th>Name</th>
           <th>Phone Number</th>
         </tr>
@@ -35,12 +35,12 @@
       <tbody>
         <% employees.forEach(employee => { %>
           <tr>
-            <td data-label="ID">
+            <!-- <td data-label="ID">
               <span><%= employee._id %></span>
               <button class="copy-btn" onclick="copyText('<%= employee._id %>')">
                 <i class="fas fa-copy"></i>
               </button>
-            </td>
+            </td> -->
             <td data-label="Name">
               <span><%= employee.name %></span>
               <button class="copy-btn" onclick="copyText('<%= employee.name %>')">

@@ -137,37 +137,45 @@ td span {
   opacity: 1;
 }
 
-/*SEARCH BAR*/ 
+/*FOOTER*/ 
+footer{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--primary-color);
+  padding: 24px 0;
+}
+footer h4{
+  color: white;
+}
 .search-bar {
   display: flex;
   justify-content: center;
-  width: 50%;
-  position: fixed;
-  top: 16px;
-
+  align-items: center;
+  width: 70%;
 }
-.search-bar input[type="text"] {
+.search-bar select, .search-bar input[type="date"] {
   padding: 10px;
   font-size: 1rem;
   width: 100%;
-  border: 2px solid var(--primary-color);
+  border: 2px solid black;
   border-radius: 4px;
   outline: none;
+  margin-right: .4rem;
 }
 .search-bar button {
   padding: 10px 15px;
   margin-left: 10px;
-  background-color: var(--primary-color);
-  color: white;
+  background-color: white;
+  color: black;
   font-size: 1rem;
-  border: none;
+  border: 2px solid black;
   cursor: pointer;
   border-radius: 4px;
 }
 .search-bar button:hover {
-  background-color: var(--primary-hover);
+  background-color: grey;
 }
-
 
 /*PAGINATION*/ 
 .pagination{
@@ -206,7 +214,23 @@ td span {
 @media (max-width: 768px) {
   .container {
     padding: 20px;
-    margin-top: 60px;
+    margin-top: 40px;
+  }
+
+  .search-bar{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .search-bar select, .search-bar input[type="date"] {
+    padding: 4px;
+    font-size: .8rem;
+    width: 100%;
+    margin-bottom: .8rem;
+  }
+  .search-bar button {
+    width: 90%;
+    margin-left: 0%;
   }
 
   table, thead, tbody, th, td, tr {
@@ -252,8 +276,8 @@ td span {
   }
 
   .back{
-    padding: 5px;
-    margin: 5px;
+    padding: 4px;
+    margin: 4px;
     z-index: 1;
   }
   .back i {
@@ -262,7 +286,7 @@ td span {
     margin-bottom: 5px;
   }
   .back p{
-    font-weight: bold;
+    display: none;
   }
 }
 @media (max-width: 460px) {

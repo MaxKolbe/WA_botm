@@ -7,14 +7,17 @@ import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
 dotenv.config()
 
+// Function to sign JWT
 const signJwt = (id) => {
     return jwt.sign({id}, process.env.JWTSECRET, {expiresIn: 60*60*24}) //1 day
 }
 
+// Get Login Page
 export const getLoginPage = (req, res) => {
     res.render("login", {req})
 }
 
+// Handle Login
 export const postLoginPage = (req, res) => {
     const { password } = req.body
     try{ 
@@ -31,15 +34,18 @@ export const postLoginPage = (req, res) => {
     }  
 }
 
+// Logout
 export const logout = (req, res) => {
     res.clearCookie("admin")
     res.status(200).redirect('/?message=Logged+out+successfully')
 }
 
+// Get Home Page
 export const getHome = (req, res) => {
     res.render("home")
 }
 
+// View OTPs
 export const viewOtps = async (req, res) => {
     const page = parseInt(req.query.page) || 1 // Default to page 1 if no query parameter
     const limit = 10 // Limit the number of documents per page
@@ -61,6 +67,7 @@ export const viewOtps = async (req, res) => {
     }
 }
 
+// View Users
 export const viewUsers = async (req, res) => {
     const page = parseInt(req.query.page) || 1 // Default to page 1 if no query parameter
     const limit = 10 // Limit the number of documents per page
@@ -82,6 +89,7 @@ export const viewUsers = async (req, res) => {
     }
 }
 
+// View Admin Operations
 export const viewAdminOps = async (req, res) => {
     const settings = await settingsModel.findOne()
     const employees = await employeeModel.find().sort({ name: 1 })
@@ -89,6 +97,7 @@ export const viewAdminOps = async (req, res) => {
     res.render("adminops", {req, mode, employees})
 }
 
+// Change Phrase
 export const changePhrase = async (req, res) => {
     const { otpId, newPhrase } = req.body
     const upNewPhrase = newPhrase.replace(/\p{Cf}/ug, '').trim().toUpperCase()
@@ -101,6 +110,7 @@ export const changePhrase = async (req, res) => {
     }
 }
 
+// Add Employee
 export const addEmployee = async (req, res) => {
     const { name, phone } = req.body;
     try{
@@ -114,6 +124,7 @@ export const addEmployee = async (req, res) => {
     }
 }
 
+// Remove Employee
 export const removeEmployee = async (req, res) => {
     const { user } = req.body
     try{
@@ -126,6 +137,7 @@ export const removeEmployee = async (req, res) => {
     }
 }
 
+// Add OTP
 export const addOtp = async (req, res) => {
     try{
         const { name, issuer, phrase, secret } = req.body
@@ -142,6 +154,7 @@ export const addOtp = async (req, res) => {
     }
 }
 
+// Toggle Bot
 export const toggleBot = async (req, res) => {
     try{
         const { botEnabled } = req.body
@@ -214,6 +227,7 @@ export const searchEmployees = async (req, res) => {
     }
 }
 
+// View Employee Logs
 export const viewEmployeeLogs = async (req, res) => {
     const page = parseInt(req.query.page) || 1 // Default to page 1 if no query parameter
     const limit = 10 // Limit the number of documents per page
@@ -223,17 +237,22 @@ export const viewEmployeeLogs = async (req, res) => {
         const logs = await otpUsageModel.find().sort({ createdAt: -1 }).skip(skip).limit(limit).populate("user")
         // Get total number of documents for pagination controls
         const totalDocuments = await otpUsageModel.countDocuments()
+        const employees = await employeeModel.find().sort({ name: 1 })
+        const otps = await otpModel.find().sort({ name: 1 })
          
         res.render("employeeLogs", {req,   
             logs,    
             currentPage: page,
-            totalPages: Math.ceil(totalDocuments / limit)
+            totalPages: Math.ceil(totalDocuments / limit),
+            employees,
+            otps
         })
     }catch(err){
         res.status(500).redirect(`/home`)
     } 
 }
 
+// Delete Individual
 export const deleteOneLog = async (req, res) => {
     try{
         const { id } = req.params
@@ -254,6 +273,7 @@ export const deleteOneLog = async (req, res) => {
     }
 }
 
+// Delete All Logs
 export const deleteAllLogs = async (req, res) => {
     try{
         //  Delete all logs from the usage collection
@@ -270,28 +290,47 @@ export const deleteAllLogs = async (req, res) => {
 
 //Search logs
 export const searchLogs = async (req, res) => {
-    res.redirect(`/employeelog?message=Searching+is+not+available+yet`)
-    // try { 
-    //     const { query } = req.body
-    //     const realQuery = query.trim() 
+    try { 
+    const { user, otp, startDate, endDate } = req.query
+ 
+    const query = {}
 
-       
-    //     //Check if query is empty
-    //     if (!realQuery) {
-    //         return res.redirect('/employeelog')
-    //     }
+    // Match by employee ID
+    if (user) {
+        query.user = user
+    }
+
+    // Match by OTP name
+    if (otp) {
+        query.otpName = otp
+    }
+
+    // Date range (on queriedAt)
+    if (startDate || endDate) {
+      query.queriedAt = {}
+      if (startDate) query.queriedAt.$gte = new Date(startDate)
+      if (endDate) {
+        const end = new Date(endDate)
+        end.setHours(23, 59, 59, 999) // capture entire day
+        query.queriedAt.$lte = end
+      }
+    }
+
+    const logs = await otpUsageModel.find(query).populate('user').sort({ queriedAt: -1 })
+
+    // Fetch data again to repopulate selects
+    const employees = await employeeModel.find().sort({ name: 1 })
+    const otps = await otpModel.find().sort({ name: 1 })
+
+    res.render('employeeLogSearchResults', {
+      req,
+      logs,
+      employees,
+      otps
+    })
     
-    //     //Search across fields using $or and $regex for partial matches
-    //     const searchResults = await otpUsageModel.find({
-    //         $or: [ 
-                
-    //             { otpName: { $regex: realQuery, $options: 'i' } }
-    //         ]
-    //     })
-
-    //     res.render("employeeLogSearchResults", {req, searchResults})
-    // } catch (err) {
-    //     console.error(err)
-    //     res.status(500).redirect(`/employeelog?error=error+during+search`)
-    // }
+    } catch (err) {
+        console.error(err)
+        res.status(500).redirect(`/employeelog?error=error+during+search`)
+    }
 }

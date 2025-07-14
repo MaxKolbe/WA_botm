@@ -10,16 +10,11 @@
 </head>
 
 <body>
-
 <div class="body">
   <a href="/home" class="back">
     <i class="fa-solid fa-backward"></i>
     <p>Go Back</p>
   </a>
-  <form class="search-bar" action="/searchLogs" method="POST">
-    <input type="text" name="query" placeholder="Search logs..." required>
-    <button type="submit">Search</button>
-  </form>
   <div class="container">
     <% if (req.query.error === "error during search") { %>
       <span id="popup"  style="color: red;"><h3><%= req.query.error%></h3></span>
@@ -51,21 +46,12 @@
           <tr>
             <td data-label="Employee">
               <span><%= log.user.name %></span>
-              <!-- <button class="copy-btn" onclick="copyText('<%= log.user.name %>')">
-                <i class="fas fa-copy"></i>
-              </button> -->
             </td>
             <td data-label="Phone">
               <span><%= log.user.phone %></span>
-              <!-- <button class="copy-btn" onclick="copyText('<%= log.user.phone %>')">
-                <i class="fas fa-copy"></i>
-              </button> -->
             </td>
             <td data-label="otpName">
               <span><%= log.otpName %></span>
-              <!-- <button class="copy-btn" onclick="copyText('<%= log.otpName %>')">
-                <i class="fas fa-copy"></i>
-              </button> -->
             </td>
             <td data-label="Time">
                 <span><%= log.queriedAt.toLocaleString('en-NG', {
@@ -78,14 +64,11 @@
                         hour12: true
                     }) %>
                 </span>
-              <!-- <button class="copy-btn" onclick="copyText('<%= log.queriedAt %>')">
-                <i class="fas fa-copy"></i>
-              </button> -->
             </td>
             <td> 
-                <form action="/deleteOneLog/<%=log.id%>?_method=DELETE" method="POST"  onsubmit="return confirmDelete()">
-                    <button class="delete-btn" style="color: red;"><i class="fa-solid fa-trash"></i></button>
-                </form>
+              <form action="/deleteOneLog/<%=log.id%>?_method=DELETE" method="POST"  onsubmit="return confirmDelete()">
+                <button class="delete-btn" style="color: red;"><i class="fa-solid fa-trash"></i></button>
+              </form>
             </td>
           </tr>
         <% }) %>
@@ -110,7 +93,29 @@
    </div>
   </div>
 </div>
-  
+<footer>
+  <form method="GET" class="search-bar" action="/searchLogs">
+    <!-- Employee select (by ID) -->
+    <select name="user">
+      <option value="">Search by Employee</option>
+      <% employees.forEach(emp => { %>
+        <option value="<%= emp._id %>"><%= emp.name %></option>
+      <% }) %>
+    </select>
+    <!-- OTP select (by Name) -->
+    <select name="otp">
+      <option value="">Search by Otp</option>
+      <% otps.forEach(otp => { %>
+        <option value="<%= otp.name %>"><%= otp.name %></option>
+      <% }) %>
+    </select>
+    <!-- Date range -->
+    <input type="date" name="startDate" />
+    <input type="date" name="endDate" />
+    <button type="submit">Search</button>
+  </form>
+</footer>
+
   <script>
     function copyText(text) {
       navigator.clipboard.writeText(text).then(() => {
@@ -133,7 +138,7 @@
         // console.log("there is an error:", popup)
         if (popup) {
             setTimeout(() => {
-                popup.style.display = 'none'
+              popup.style.display = 'none'
             }, 3000) // 3 seconds
         }
     }
