@@ -162,6 +162,7 @@ footer h4{
   border-radius: 4px;
   outline: none;
   margin-right: .4rem;
+  color: black;
 }
 .search-bar button {
   padding: 10px 15px;

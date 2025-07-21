@@ -52,7 +52,7 @@ export const viewOtps = async (req, res) => {
     const skip = (page - 1) * limit // Calculate the number of documents to skip
 
     try {
-        const otps = await otpModel.find().sort({ createdAt: -1 }).skip(skip).limit(limit)
+        const otps = await otpModel.find().sort({ name: 1 }).skip(skip).limit(limit)
         // Get total number of documents for pagination controls
         const totalDocuments = await otpModel.countDocuments()
 
