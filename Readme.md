@@ -74,7 +74,7 @@ const client = require('twilio')(accountSid, authToken)
 
 client.messages
     .create({
-        body: 'Hey, this is a test message'
+        body: 'Hey, this is a test message',
         from: 'whatsapp:+whatsapp_sender', // your twilio phone number
         to: 'whatsapp:+your_phone_number'
     })
