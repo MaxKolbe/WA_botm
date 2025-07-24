@@ -77,7 +77,7 @@
 
    <div class="bottom-space">
     <form action="/deleteAllLogs/?_method=DELETE" method="POST"  onsubmit="return confirmDelete()">
-        <button class="delete-all-btn" >Delete All Logs</button>
+        <button class="delete-all-btn" >Delete All</button>
     </form>
      <!-- Pagination Controls -->
     <div class="pagination">
@@ -110,8 +110,8 @@
       <% }) %>
     </select>
     <!-- Date range -->
-    <input type="date" name="startDate" />
-    <input type="date" name="endDate" />
+    <input type="date" name="startDate" placeholder="mm-dd-yyyy" />
+    <input type="date" name="endDate" placeholder="mm-dd-yyyy" />
     <button type="submit">Search</button>
   </form>
 </footer>

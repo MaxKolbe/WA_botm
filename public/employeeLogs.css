@@ -291,11 +291,11 @@ footer h4{
   }
 }
 @media (max-width: 460px) {
-.pagination{
+/* .pagination{
   margin-top: 1.2rem;
-}
+} */
 .delete-all-btn{
-  padding: 6px;
-  margin: 1.2rem 0;
+  padding: 8px;
+  /* margin: 1.2rem 0; */
 }
 }

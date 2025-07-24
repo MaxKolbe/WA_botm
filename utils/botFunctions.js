@@ -7,8 +7,8 @@ const authToken = process.env.TWILIO_AUTH_TOKEN
 const client = twilio(accountSid, authToken)
 const registeredSender = process.env.TWILIO_PHONE_NUMBER
 
-export const sendAuthCode = (employee, phoneNumber, code)=> {
-  const message = client.messages.create({
+export const sendAuthCode = async (employee, phoneNumber, code)=> {
+  const message = await client.messages.create({
     body: `Hey ${employee}, your code is ${code}`,
     from: `${registeredSender}`, 
     to: `${phoneNumber}`, 
