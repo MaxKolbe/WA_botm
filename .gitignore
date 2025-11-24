@@ -1,6 +1,11 @@
 .env 
 node_modules 
+dist
 
+// If you get an unspecified error while trying to convert js project to ts, It's  prolly a route issue
+// Isolate the routes in app/server/index then work your way to fixing it
+// Please make sure imports end with .js
+// fix up imported functions as well to make sure they're type annotated and shi
 
 // export const botRequests = async (req, res) => {
 //   try {
