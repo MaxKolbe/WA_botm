@@ -3,8 +3,11 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1", 
-    "start": "nodemon index.js"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon dist/index.js", 
+    "build": "npx tsc",
+    "watch": "npx tsc -w",
+    "dev": "npx ts-node-dev --respawn src/index.tx"
   },
   "keywords": [],
   "author": "",
@@ -21,5 +24,10 @@
     "mongoose": "^8.16.1",
     "otplib": "^12.0.1",
     "twilio": "^5.7.1"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.5",
+    "@types/node": "^24.10.1",
+    "typescript": "^5.9.3"
   }
 }
