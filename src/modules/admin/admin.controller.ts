@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
+import { IQuery } from '../../types/admintypes.js';
 import { signJwt } from '../../utils/signJwt.js';
-import { ParsedQs } from '../../types/admintypes.js';
 import {
   getAllOtps,
   getAllUsers,
@@ -15,12 +15,13 @@ import {
   viewEmployeeLogs,
   deleteOneLog,
   deleteAllLogs,
-  searchLogs
+  searchLogs,
 } from './admin.service.js';
 import dotenv from 'dotenv';
 dotenv.config();
 
 // Authentication Controllers
+
 // Get Login Page Controller
 export const getLoginPageController = async (req: Request, res: Response) => {
   res.render('login', { req });
@@ -49,6 +50,7 @@ export const logOutController = async (req: Request, res: Response) => {
 };
 
 // Home Controllers
+
 // Get Home Page Controller
 export const getHomeController = async (req: Request, res: Response) => {
   res.render('home');
@@ -56,8 +58,7 @@ export const getHomeController = async (req: Request, res: Response) => {
 // View OTPs Controller
 export const viewOtpsController = async (req: Request, res: Response) => {
   try {
-    const page: string | ParsedQs | 1 | (string | ParsedQs)[] =
-      req.query.page || 1; // Default to page 1 if no query parameter
+    const page: number = parseInt(req.query.page as any) || 1; // Default to page 1 if no query parameter
     const skip = (page - 1) * 10; // Calculate the number of documents to skip
 
     const response = await getAllOtps(skip, 10); // Seconde param is a Limit
@@ -80,9 +81,9 @@ export const viewOtpsController = async (req: Request, res: Response) => {
 // View Employees Controller
 export const viewUsersController = async (req: Request, res: Response) => {
   try {
-    const page: string | ParsedQs | 1 | (string | ParsedQs)[] =
-      req.query.page || 1;
+    const page: number = parseInt(req.query.page as any) || 1;
     const skip = (page - 1) * 10; // Calculate the number of documents to skip
+
     const response = await getAllUsers(skip, 10);
 
     if (response.status !== 200) {
@@ -145,8 +146,7 @@ export const viewEmployeeLogsController = async (
   res: Response,
 ) => {
   try {
-    const page: string | ParsedQs | 1 | (string | ParsedQs)[] =
-      req.query.page || 1;
+    const page: number = parseInt(req.query.page as any) || 1;
     const skip = (page - 1) * 10; // Calculate the number of documents to skip
     const response = await viewEmployeeLogs(skip, 10);
 
@@ -162,7 +162,6 @@ export const viewEmployeeLogsController = async (
     res.status(500).redirect(`/home`);
   }
 };
-/** TEST OUT IN THE MORNING */
 // Delete Individual Log Function
 export const deleteOneLogController = async (req: Request, res: Response) => {
   try {
@@ -186,54 +185,48 @@ export const deleteAllLogsController = async (req: Request, res: Response) => {
   }
 };
 // Search logs Function
-// export const searchLogsController = async (req: Request, res: Response) => {
-//       try {
-//     const { user, otp, startDate, endDate } = req.query
+export const searchLogsController = async (req: Request, res: Response) => {
+  try {
+    const { user, otp, startDate, endDate } = req.query;
+    const query: IQuery = {};
 
-//     const query = {}
+    // Match by employee ID
+    if (user) {
+      query.user = user as string;
+    }
 
-//     // Match by employee ID
-//     if (user) {
-//         query.user = user
-//     }
+    // Match by OTP name
+    if (otp) {
+      query.otpName = otp as string;
+    }
 
-//     // Match by OTP name
-//     if (otp) {
-//         query.otpName = otp
-//     }
+    // Date range (on queriedAt)
+    if (startDate || endDate) {
+      query.queriedAt = {};
+      if (startDate) query.queriedAt.$gte = new Date(startDate as string);
+      if (endDate) {
+        const end = new Date(endDate as string);
+        end.setHours(23, 59, 59, 999); // capture entire day
+        query.queriedAt.$lte = end;
+      }
+    }
 
-//     // Date range (on queriedAt)
-//     if (startDate || endDate) {
-//       query.queriedAt = {}
-//       if (startDate) query.queriedAt.$gte = new Date(startDate)
-//       if (endDate) {
-//         const end = new Date(endDate)
-//         end.setHours(23, 59, 59, 999) // capture entire day
-//         query.queriedAt.$lte = end
-//       }
-//     }
+    const response = await searchLogs(query);
 
-//     const logs = await otpUsageModel.find(query).populate('user').sort({ queriedAt: -1 })
-
-//     // Fetch data again to repopulate selects
-//     const employees = await employeeModel.find().sort({ name: 1 })
-//     const otps = await otpModel.find().sort({ name: 1 })
-
-//     res.render('employeeLogSearchResults', {
-//       req,
-//       logs,
-//       employees,
-//       otps
-//     })
-
-//     } catch (err) {
-//         console.error(err)
-//         res.status(500).redirect(`/employeelog?error=error+during+search`)
-//     }
-// };
-/** TEST OUT IN THE MORNING */
+    res.render('employeeLogSearchResults', {
+      req,
+      logs: response.data.logs,
+      employees: response.data.employees,
+      otps: response.data.otps,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).redirect(`/employeelog?error=error+during+search`);
+  }
+};
 
 // Admin Operation Controllers
+
 // View Admin Operations Controller
 export const viewAdminOpsController = async (req: Request, res: Response) => {
   const response = await viewAdminOps();
