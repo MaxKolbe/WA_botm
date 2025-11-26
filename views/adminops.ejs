@@ -34,7 +34,7 @@
     <% if (req.query.message === "Employee added successfully") { %>
         <span id="popup" style="color: green;"><h3><%= req.query.message%></h3></span>
     <% } %>
-    <% if (req.query.message === "Employee deleted successfully") { %>
+    <% if (req.query.message === "Employee removed successfully") { %>
         <span id="popup" style="color: green;"><h3><%= req.query.message%></h3></span>
     <% } %>
      <% if (req.query.message === "Bot status updated successfully") { %>
@@ -53,7 +53,7 @@
   </form>
 
   <!-- Remove Employee -->
-  <form class="form-card" action="/admin/remove-employee" method="POST" onsubmit="return confirmDelete()">
+  <form class="form-card" action="/admin/remove-employee/?_method=DELETE" method="POST" onsubmit="return confirmDelete()">
     <h3><i class="fa-solid fa-user-minus"></i> Remove Employee</h3>
     <select name="user" id="employee" required>
       <option value="">-- Select an Employee --</option>
