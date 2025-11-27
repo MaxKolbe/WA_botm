@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { verifyUser } from '../../middleware/authenticateUser.js';
 import {
   getLoginPageController,
   postLoginPageController,
@@ -19,32 +20,31 @@ import {
   addOtpController,
   toggleBotController,
 } from './admin.controller.js';
-// import { verifyUser } from '../../middleware/authenticateUser.js';
 
 const adminRouter = Router();
 
 // Authentication Routes
 adminRouter.get('/', getLoginPageController);
 adminRouter.post('/login', postLoginPageController);
-adminRouter.get('/logout', logOutController);
+adminRouter.get('/logout', verifyUser, logOutController);
 
 // Admin Home Routes
-adminRouter.get('/home', getHomeController);
-adminRouter.get('/otps', viewOtpsController);
-adminRouter.get('/users', viewUsersController);
-adminRouter.post('/searchOtps', searchOtpsController);
-adminRouter.post('/searchEmployees', searchEmployeesController);
-adminRouter.get('/employeelog', viewEmployeeLogsController);
-adminRouter.delete('/deleteOneLog/:id', deleteOneLogController);
-adminRouter.delete('/deleteAllLogs', deleteAllLogsController);
-adminRouter.get('/searchLogs', searchLogsController);
+adminRouter.get('/home', verifyUser, getHomeController);
+adminRouter.get('/otps', verifyUser, viewOtpsController);
+adminRouter.get('/users', verifyUser, viewUsersController);
+adminRouter.post('/searchOtps', verifyUser, searchOtpsController);
+adminRouter.post('/searchEmployees', verifyUser, searchEmployeesController);
+adminRouter.get('/employeelog', verifyUser, viewEmployeeLogsController);
+adminRouter.delete('/deleteOneLog/:id', verifyUser, deleteOneLogController);
+adminRouter.delete('/deleteAllLogs', verifyUser, deleteAllLogsController);
+adminRouter.get('/searchLogs', verifyUser, searchLogsController);
 
 // Admin Operation Routes
-adminRouter.get('/adminops', viewAdminOpsController);
-adminRouter.post('/admin/change-phrase', changePhraseController);
-adminRouter.post('/admin/add-employee', addEmployeeController);
-adminRouter.delete('/admin/remove-employee', removeEmployeeController);
-adminRouter.post('/admin/add-otp', addOtpController);
-adminRouter.post('/admin/toggle-bot', toggleBotController);
+adminRouter.get('/adminops', verifyUser, viewAdminOpsController);
+adminRouter.post('/admin/change-phrase', verifyUser, changePhraseController);
+adminRouter.post('/admin/add-employee', verifyUser, addEmployeeController);
+adminRouter.delete('/admin/remove-employee', verifyUser, removeEmployeeController);
+adminRouter.post('/admin/add-otp', verifyUser, addOtpController);
+adminRouter.post('/admin/toggle-bot', verifyUser, toggleBotController);
 
 export default adminRouter;
