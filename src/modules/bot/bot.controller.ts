@@ -116,15 +116,14 @@ If you message NenBot and you don't get a reply within a minute (NenBot is NOT d
       user.attemptsResetAt = new Date(Date.now() + 5 * 60 * 1000); // 5 mins from now
     }
 
-    const usage = (await createOtpUsageLog(user.id, otpElement.name)).data;
-    //   user: user._id,
-    //   otpName: otpElement.name,
-    //   // loginConfirmed: false
-    // });
+    if (user.attempts === 1) {
+      const usage = (await createOtpUsageLog(user.id, otpElement.name)).data;
 
-    // Link usage to user
+      // Link usage to user
+      user.otpLogs.push(usage.id);
+      await user.save();
+    }
 
-    user.otpLogs.push(usage.id);
     await user.save();
     return;
   } catch (err) {
