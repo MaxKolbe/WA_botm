@@ -159,7 +159,7 @@ export const searchLogs = async (query: IQuery) => {
   };
 };
 
-// Retrieve info for Admin Operations Page Function 
+// Retrieve info for Admin Operations Page Function
 export const viewAdminOps = async () => {
   const settings = await settingsModel.findOne();
   const mode = settings!.botEnabled;
@@ -247,4 +247,3 @@ export const toggleBot = async (botEnabled: string) => {
     message: 'Bot+status+updated+successfully',
   };
 };
-

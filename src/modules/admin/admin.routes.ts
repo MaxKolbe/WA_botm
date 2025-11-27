@@ -43,7 +43,11 @@ adminRouter.get('/searchLogs', verifyUser, searchLogsController);
 adminRouter.get('/adminops', verifyUser, viewAdminOpsController);
 adminRouter.post('/admin/change-phrase', verifyUser, changePhraseController);
 adminRouter.post('/admin/add-employee', verifyUser, addEmployeeController);
-adminRouter.delete('/admin/remove-employee', verifyUser, removeEmployeeController);
+adminRouter.delete(
+  '/admin/remove-employee',
+  verifyUser,
+  removeEmployeeController,
+);
 adminRouter.post('/admin/add-otp', verifyUser, addOtpController);
 adminRouter.post('/admin/toggle-bot', verifyUser, toggleBotController);
 

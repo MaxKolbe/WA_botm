@@ -1,7 +1,12 @@
 import { Request, Response } from 'express';
 import { generateCode } from '../../utils/otpGenerator.js';
 import { sendAuthCode } from '../../utils/botFunctions.js';
-import { getSettingsStats, getOneOtp, getOneEmployee, createOtpUsageLog } from './bot.services.js';
+import {
+  getSettingsStats,
+  getOneOtp,
+  getOneEmployee,
+  createOtpUsageLog,
+} from './bot.services.js';
 
 export const botRequests = async (req: Request, res: Response) => {
   try {
@@ -80,7 +85,7 @@ If you message NenBot and you don't get a reply within a minute (NenBot is NOT d
         `<Response><Message>The bot is currently disabled. Please try again later.</Message></Response>`,
       );
     }
- 
+
     // If attempts exceed limit
     if (user.attempts > 2) {
       user.enabled = false;
@@ -111,17 +116,15 @@ If you message NenBot and you don't get a reply within a minute (NenBot is NOT d
       user.attemptsResetAt = new Date(Date.now() + 5 * 60 * 1000); // 5 mins from now
     }
 
-    const usage = (await createOtpUsageLog(user.id, otpElement.name)).data
-    console.log("This is the usage object:", usage, "This is it's id:", usage.id)
- 
+    const usage = (await createOtpUsageLog(user.id, otpElement.name)).data;
     //   user: user._id,
     //   otpName: otpElement.name,
     //   // loginConfirmed: false
     // });
 
     // Link usage to user
-    user.otpLogs.push(usage.id);
 
+    user.otpLogs.push(usage.id);
     await user.save();
     return;
   } catch (err) {
