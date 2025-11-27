@@ -2,6 +2,7 @@ import otpModel from '../../models/otpModel.js';
 import employeeModel from '../../models/employeeModel.js';
 import settingsModel from '../../models/settingsModel.js';
 import otpUsageModel from '../../models/otpUsageModel.js';
+import barredNumbersModel from '../../models/barredNumbers.js';
 import { IQuery } from '../../types/admintypes.js';
 
 // Get otps Function
@@ -192,7 +193,12 @@ export const changePhrase = async (otpId: string, newPhrase: string) => {
 // Add a new employee Function
 export const addEmployee = async (name: string, phone: string) => {
   await employeeModel.create({ name, phone: `whatsapp:${phone}` });
-
+  
+  const barredUser = await barredNumbersModel.findOne({phoneNumber: `whatsapp:${phone}`})
+  if(barredUser){
+    await barredNumbersModel.deleteOne({phoneNumber: `whatsapp:${phone}`})
+  }
+  
   return {
     status: 201,
     message: 'Employee+added+successfully',

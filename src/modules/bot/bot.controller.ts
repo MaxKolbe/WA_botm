@@ -6,6 +6,8 @@ import {
   getOneOtp,
   getOneEmployee,
   createOtpUsageLog,
+  getBarredNumber,
+  createBarredNumber,
 } from './bot.services.js';
 
 export const botRequests = async (req: Request, res: Response) => {
@@ -17,7 +19,18 @@ export const botRequests = async (req: Request, res: Response) => {
     const otpElement = (await getOneOtp(message)).data;
     const user = (await getOneEmployee(sender)).data;
 
+    const nonUser = await getBarredNumber(sender);
+
     if (!user) {
+      if (nonUser.status === 200) {
+        if (sender === nonUser.data!.phoneNumber) {
+          console.log('This branch was fired: second time');
+          return;
+        }
+      }
+
+      await createBarredNumber(sender);
+      console.log('This branch was fired: firsr time');
       return res.send(
         `<Response><Message>No such employee found. Access denied.</Message></Response>`,
       );

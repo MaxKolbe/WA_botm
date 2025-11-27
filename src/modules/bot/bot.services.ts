@@ -1,7 +1,8 @@
 import employeeModel from '../../models/employeeModel.js';
-import otpModel from '../../models/otpModel.js';
 import settingsModel from '../../models/settingsModel.js';
 import otpUsageModel from '../../models/otpUsageModel.js';
+import barredNumbersModel from '../../models/barredNumbers.js';
+import otpModel from '../../models/otpModel.js';
 
 export const getSettingsStats = async () => {
   const settings = await settingsModel.findOne();
@@ -49,5 +50,31 @@ export const createOtpUsageLog = async (
     status: 200,
     message: 'success',
     data: usage,
+  };
+};
+
+export const getBarredNumber = async (sender: string) => {
+  const nonUser = await barredNumbersModel.findOne({ phoneNumber: sender });
+
+  if (!nonUser) {
+    return {
+      status: 404,
+      message: 'Non User not found',
+    };
+  }
+
+  return {
+    status: 200,
+    message: 'success',
+    data: nonUser,
+  };
+};
+
+export const createBarredNumber = async (sender: string) => {
+  await barredNumbersModel.create({ phoneNumber: sender });
+
+  return {
+    status: 200,
+    message: 'success',
   };
 };
