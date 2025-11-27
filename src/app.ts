@@ -2,10 +2,9 @@ import express from 'express';
 import cookieParser from 'cookie-parser';
 import methodOverride from 'method-override';
 import connectToDb from './configs/db.js';
-import adminRouter from './modules/admin/admin.route.js';
+import adminRouter from './modules/admin/admin.routes.js';
+import botRouter from './modules/bot/bot.route.js';
 import { Request, Response, NextFunction } from 'express';
-import { error } from 'console';
-// import botRouter from './modules/bot/bot.route.js';
 
 const app = express();
 
@@ -20,7 +19,7 @@ app.set('views', 'views');
 connectToDb();
 
 app.use('/', adminRouter);
-// app.use('/webhook', botRouter);
+app.use('/webhook', botRouter);
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   console.log(`Internal Server Error: ${err.message} \n`);

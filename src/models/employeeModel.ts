@@ -10,7 +10,7 @@ export interface IEmployee extends Document {
   firsttimeResetAt: Date;
   queriedResetAt: Date;
   attemptsResetAt: Date;
-  otpLogs: ObjectId;
+  otpLogs: ObjectId[];
 }
 
 const EmployeeSchema: Schema = new Schema(

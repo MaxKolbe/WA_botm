@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { botRequests } from '../../controllers/botController.js';
+import { botRequests } from './bot.controller.js';
 
 const botRouter = Router();
 

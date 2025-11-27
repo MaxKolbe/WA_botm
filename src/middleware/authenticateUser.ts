@@ -10,7 +10,6 @@ export const verifyUser = (req: Request, res: Response, next: NextFunction)=>{
       if(err){
         res.status(500).redirect('/?error=Error+authenticating+user+Login+again')
       }else{
-        console.log(decoded)
         // req.user = decoded
         next()
       }  

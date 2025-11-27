@@ -16,7 +16,7 @@ import {
   deleteOneLog,
   deleteAllLogs,
   searchLogs,
-} from './admin.service.js';
+} from './admin.services.js';
 import dotenv from 'dotenv';
 dotenv.config();
 
