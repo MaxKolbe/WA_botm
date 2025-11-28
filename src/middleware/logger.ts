@@ -5,7 +5,7 @@ dotenv.config()
 const { combine, timestamp, json, errors, align } = winston.format;
 
 const logger = winston.createLogger({
-  level: process.env.LOG_LEVEL || 'info', //minimum log level
+  level: (process.env.LOG_LEVEL as string) || 'info', //minimum log level
   format: combine(errors({ stack: true }), timestamp({format: 'YYYY-MM-DD hh:mm A', }), json(), align()), //log output format + timestamp
   transports: [new winston.transports.Console()], //output destination
 });
