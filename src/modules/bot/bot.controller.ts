@@ -1,6 +1,8 @@
-import { Request, Response } from 'express';
+import { randomUUID } from 'crypto';
+import logger from '../../middleware/logger.js';
 import { generateCode } from '../../utils/otpGenerator.js';
 import { sendAuthCode } from '../../utils/botFunctions.js';
+import { Request, Response } from 'express';
 import {
   getSettingsStats,
   getOneOtp,
@@ -11,6 +13,8 @@ import {
 } from './bot.services.js';
 
 export const botRequests = async (req: Request, res: Response) => {
+  const childLogger = logger.child({ logId: Date.now() + randomUUID() });
+
   try {
     const settings = (await getSettingsStats()).data;
     const message: string = req.body.Body?.trim().toUpperCase();
@@ -24,13 +28,19 @@ export const botRequests = async (req: Request, res: Response) => {
     if (!user) {
       if (nonUser.status === 200) {
         if (sender === nonUser.data!.phoneNumber) {
-          console.log('This branch was fired: second time');
+          // console.log('This branch was fired: second time');
+          childLogger.info('This branch was fired the SECOND time', {
+            culprit: sender,
+          });
           return;
         }
       }
 
       await createBarredNumber(sender);
-      console.log('This branch was fired: firsr time');
+      // console.log('This branch was fired: first time');
+      childLogger.info('This branch was fired the FIRST time', {
+        culprit: sender,
+      });
       return res.send(
         `<Response><Message>No such employee found. Access denied.</Message></Response>`,
       );
@@ -85,14 +95,17 @@ If you message NenBot and you don't get a reply within a minute (NenBot is NOT d
 
     // If user recently queried while bot disabled
     if (user.queried === true) {
-      console.log('Secret message to let you know bot got disabled previously');
+      // console.log('Secret message to let you know bot got disabled previously');
+      childLogger.info(
+        'Secret message to let you know bot got disabled previously',
+      );
       return; // No message sent again to avoid spamming
     }
 
     // Check bot enabled/disabled status
     if (settings && !settings.botEnabled) {
       user.queried = true;
-      user.queriedResetAt = new Date(Date.now() + 15 * 60 * 1000); // 15 mins
+      user.queriedResetAt = new Date(Date.now() + 5 * 60 * 1000); // 5 mins
       await user.save();
       return res.send(
         `<Response><Message>The bot is currently disabled. Please try again later.</Message></Response>`,
@@ -140,7 +153,8 @@ If you message NenBot and you don't get a reply within a minute (NenBot is NOT d
     await user.save();
     return;
   } catch (err) {
-    console.error(err);
+    // console.error(err);
+    logger.error(err);
     return res.send(
       `<Response><Message>An error occurred. Please try again later.</Message></Response>`,
     );
