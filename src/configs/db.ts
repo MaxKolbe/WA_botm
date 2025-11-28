@@ -12,7 +12,7 @@ mongoose.connection.on('error', (err) =>
 );
 
 const connectToDb = async () => {
-  await mongoose.connect(process.env.DEV_MONGODB_URL as string);
+  await mongoose.connect(process.env.MONGODB_URL as string);
 };
 
 export default connectToDb;
