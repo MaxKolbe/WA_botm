@@ -193,12 +193,14 @@ export const changePhrase = async (otpId: string, newPhrase: string) => {
 // Add a new employee Function
 export const addEmployee = async (name: string, phone: string) => {
   await employeeModel.create({ name, phone: `whatsapp:${phone}` });
-  
-  const barredUser = await barredNumbersModel.findOne({phoneNumber: `whatsapp:${phone}`})
-  if(barredUser){
-    await barredNumbersModel.deleteOne({phoneNumber: `whatsapp:${phone}`})
+
+  const barredUser = await barredNumbersModel.findOne({
+    phoneNumber: `whatsapp:${phone}`,
+  });
+  if (barredUser) {
+    await barredNumbersModel.deleteOne({ phoneNumber: `whatsapp:${phone}` });
   }
-  
+
   return {
     status: 201,
     message: 'Employee+added+successfully',
