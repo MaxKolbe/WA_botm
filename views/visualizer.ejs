@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script
+      src="https://kit.fontawesome.com/5e2b46074f.js"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="shortcut icon" href="/bitimg.png" type="image/x-icon" />
+    <title>Bot Requests per month</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      .chartContainer {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        max-height: 95vh;
+        padding: 2rem 4rem;
+      }
+      .chartcol-2 {
+        text-align: center;
+        border: 2px solid #17399d;
+        padding: 0.4rem 0.8rem;
+        margin-top: 0.4rem;
+      }
+      .chartcol-2 button {
+        border: 2px solid #17399d;
+        background: #23aef9;
+        padding: 0.4rem 0.8rem;
+        cursor: pointer;
+      }
+      .chartcol-2 select {
+        padding: 0.4rem 0.8rem;
+        border: 2px solid #17399d;
+        outline: none;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="chartContainer">
+      <canvas id="otpChart" class="chartcol-1"></canvas>
+      <form class="chartcol-2" action="/public-stats" method="GET">
+        <select name="query" required>
+          <option value="">Select Year</option>
+          <option value="2025">2025</option>
+          <option value="2026">2026</option>
+        </select>
+        <button type="submit">Get Data</button>
+      </form>
+    </div>
+    <script>
+      const labels = <%- JSON.stringify(labels) %>;
+      const values = <%- JSON.stringify(values) %>;
+      const ctx = document.getElementById('otpChart').getContext("2d");
+
+      new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: "Bot Requests Per Month",
+              data: values,
+              borderWidth: 2,
+              borderColor: '#17399D',
+              backgroundColor: '#23AEF9',
+            }
+          ]
+        }
+      });
+    </script>
+  </body>
+</html>

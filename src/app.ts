@@ -4,6 +4,7 @@ import methodOverride from 'method-override';
 import connectToDb from './configs/db.js';
 import adminRouter from './modules/admin/admin.routes.js';
 import botRouter from './modules/bot/bot.route.js';
+import visualizerRouter from './modules/visualizer/visualizer.routes.js';
 import { Request, Response, NextFunction } from 'express';
 
 const app = express();
@@ -20,6 +21,7 @@ connectToDb();
 
 app.use('/', adminRouter);
 app.use('/webhook', botRouter);
+app.use('/public-stats', visualizerRouter);
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   console.log(`Internal Server Error: ${err.message} \n`);
