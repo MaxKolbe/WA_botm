@@ -8,7 +8,7 @@
 
 WA_botm is a WhatsApp chatbot for OTP authentication. It provides secure login verification, a user-friendly admin interface as well as usage tracking. It can be used and modified for secure access and customer verification.
 
-## 📄 Content
+## Content
 1. [Quickstart](#quickstart)
 2. [Build Stack](#build-stack)
 3. [Features](#features)
@@ -18,7 +18,7 @@ WA_botm is a WhatsApp chatbot for OTP authentication. It provides secure login v
 7. [Admin User Interface](#admin-user-interface)
 8. [Troubleshooting](#troubleshooting)
 
-## ⚡ Quickstart
+## Quickstart
 - Clone the repository
     >  git clone https://github.com/MaxKolbe/WA_botm.git <br> cd WA_botm
 - Install dependencies
@@ -31,7 +31,7 @@ WA_botm is a WhatsApp chatbot for OTP authentication. It provides secure login v
 -   Run the development server
     > npm run start
 
-## 🧱 Build Stack
+## Build Stack
 1. Admin Interface (Frontend): Ejs
 2. Styling: Vanilla CSS 
 3. Language: JavaScript
@@ -40,12 +40,12 @@ WA_botm is a WhatsApp chatbot for OTP authentication. It provides secure login v
 6. WhatsApp Sender: Twilio
 7. Otp Generator: Otplib
 
-## ✨ Features
+## Features
 - WhatsApp OTP Sender: Send a phrase = receive an OTP
 - Admin dashboard: manage OTPs and employees, toggle bot status
 - OTP usage logs
 
-## 📡 Twilio Setup
+## Twilio Setup
 Twilio is a customer engagement platform that simplifies communication and makes communication channels like voice, messaging and video accessible to everyone through APIs.
 
 This project uses Twilio's WhatsApp API to enable the chatbot. You’ll learn to set it up in both Sandbox (for development) and Production (live deployment) environments. 
@@ -64,7 +64,7 @@ Helpful Resources:
 [The WhatsApp Business Platform with Twilio](https://www.twilio.com/docs/whatsapp)<br>
 [Register on WhatsApp using Self Sign-up](https://www.twilio.com/docs/whatsapp/self-sign-up)<br>
 
-### 🧪 Sandbox [Try Whatsapp via Sandbox](https://console.twilio.com/us1/develop/sms/try-it-out/whatsapp-learn)
+### Sandbox [Try Whatsapp via Sandbox](https://console.twilio.com/us1/develop/sms/try-it-out/whatsapp-learn)
 This is basically a development space where you can test sending and receiving messages on whatsapp. Twilio provides you with a phone number(WhatsApp Sender) for testing purposes, you first text with the `join-code` provided to enable you use it for testing. 
 - You can send a message from Whatsapp (WhatsApp Sender) to your user (YOU in this case) using the following code: 
 ```javascript
@@ -91,12 +91,12 @@ You will find your AccountSid and AuthToken at the [Twilio console dashboard](ht
 return res.send(`<Response><Message>Hello</Message></Response>`)
 ```
 
-#### 🎣 webhook
+#### webhook
 A webhook is like a way for an app (like Twilio) to send a message to your app when something happens. <br>
 In this case, a webhook is a URL that Twilio calls whenever an event happens (like receiving a WhatsApp message), so your app can react to it. <br>
 You set the webhook URL in your Twilio console, and your app must have that same route ready to receive the info (e.g., a POST route like /bot).
 
-#### ⚙️ function
+#### function
 - You can create a function to respond to messages sent to your bot (same as requests to your webhook):
 ```javascript
 const accountSid = your_account_sid;
@@ -124,7 +124,7 @@ app.post("/bot", (req, res) => {
 })
 ```
 
-### 🚀 Production [Register on WhatsApp using Self Sign-up](https://www.twilio.com/docs/whatsapp/self-sign-up)
+### Production [Register on WhatsApp using Self Sign-up](https://www.twilio.com/docs/whatsapp/self-sign-up)
 For production you will need to register your own WhatsApp sender to enable you send messages. 
 > Here's a great youtube video explaining how to do this [Link](https://youtu.be/9ezp4TD10rE?si=ZZ7Vclv-iFN8w778) 
 
@@ -153,7 +153,7 @@ The steps are still listed below:
   })
  ```
 
-## 📄 Database Schemas
+## Database Schemas
 - Employee Schema <br>
 ```
 name: String
@@ -205,7 +205,7 @@ The Admin User Interface provides a simple way to monitor and manage the bot and
 
 All actions are accessible through an EJS-rendered interface and protected routes to ensure only authorized users can perform administrative tasks.
 
-## 🔁 Bot Logic
+## Bot Logic
 1. **Receive Incoming Message**
 
    * Extracts the message body and sender phone number from the incoming Twilio request.
@@ -286,9 +286,9 @@ All actions are accessible through an EJS-rendered interface and protected route
 
     * If anything goes wrong, log the error and send a generic failure message.
 
-## 📌 Troubleshooting
+## Troubleshooting
 
-### 🟡 Bot Not Responding on WhatsApp
+### Bot Not Responding on WhatsApp
 
 ---
 
@@ -297,7 +297,7 @@ You send a phrase to the WhatsApp bot, but receive no OTP or only one tick (mess
 
 **Possible Causes & Fixes:**
 
-- **✅ Twilio WhatsApp Sender Restricted or Disabled by Meta**  
+- **Twilio WhatsApp Sender Restricted or Disabled by Meta**  
   Meta might restrict your sender number if your [Business Profile](https://business.whatsapp.com/policy) lacks a proper website or violates Meta's Business Policy.
 
   **Fix:**  
@@ -305,13 +305,13 @@ You send a phrase to the WhatsApp bot, but receive no OTP or only one tick (mess
   - Add it to your Meta Business Manager profile.
   - Request a review from Meta to reactivate your number.
 
-- **✅ Bot Disabled in Settings**  
+- **Bot Disabled in Settings**  
   If the bot was disabled through the settings, users will not receive OTPs.
 
   **Fix:**  
   - Re-enable the bot by toggling the setting in your admin panel or directly updating the database.
 
-- **✅ Rate Limits Hit by User**  
+- **Rate Limits Hit by User**  
   A user may exceed OTP attempts (more than 3), triggering a temporary block.
 
   **Fix:**  
@@ -320,7 +320,7 @@ You send a phrase to the WhatsApp bot, but receive no OTP or only one tick (mess
 
 ---
 
-### 🟡 502 Bad Gateway on Render
+### 502 Bad Gateway on Render
 
 ---
 
@@ -329,7 +329,7 @@ The deployed web service returns a `502 Bad Gateway` error.
 
 **Possible Causes & Fixes:**
 
-- **✅ Server Crashed or Didn't Start Properly**  
+- **Server Crashed or Didn't Start Properly**  
   Check your logs on Render for stack traces or port issues.
 
   **Fix:**
@@ -338,5 +338,5 @@ The deployed web service returns a `502 Bad Gateway` error.
   app.listen(PORT, () => console.log(`Server running on port ${PORT}`))
 
 
-## 📘Liscense
+## Liscense
 This project is proprietary software. All rights reserved.
