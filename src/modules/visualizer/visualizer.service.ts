@@ -1,4 +1,4 @@
-import otpUsageModel from '../../models/otpUsageModel.js';
+import otpUsageModel from '../../models/otpUsageModel.model.js';
 
 export const getStats = async (query: any) => {
   const currentYear = new Date().getFullYear();

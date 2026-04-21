@@ -1,8 +1,8 @@
-import otpModel from '../../models/otpModel.js';
-import employeeModel from '../../models/employeeModel.js';
-import settingsModel from '../../models/settingsModel.js';
-import otpUsageModel from '../../models/otpUsageModel.js';
-import barredNumbersModel from '../../models/barredNumbers.js';
+import otpModel from '../../models/otpModel.model.js';
+import employeeModel from '../../models/employeeModel.model.js';
+import settingsModel from '../../models/settingsModel.model.js';
+import otpUsageModel from '../../models/otpUsageModel.model.js';
+import barredNumbersModel from '../../models/barredNumbers.model.js';
 import { IQuery } from '../../types/admintypes.js';
 
 // Get otps Function

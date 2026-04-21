@@ -1,5 +1,5 @@
 import { randomUUID } from 'crypto';
-import logger from '../../middleware/logger.js';
+import logger from '../../configs/logger.config.js';
 import { generateCode } from '../../utils/otpGenerator.js';
 import { sendAuthCode } from '../../utils/botFunctions.js';
 import { Request, Response } from 'express';
@@ -24,6 +24,11 @@ export const botRequests = async (req: Request, res: Response) => {
     const user = (await getOneEmployee(sender)).data;
 
     const nonUser = await getBarredNumber(sender);
+
+    if (message.startsWith('/')) {
+      console.log('The message actually started with /');
+      return res.redirect('/webhook/broadcast');
+    }
 
     if (!user) {
       if (nonUser.status === 200) {

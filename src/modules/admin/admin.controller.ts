@@ -17,8 +17,7 @@ import {
   deleteAllLogs,
   searchLogs,
 } from './admin.services.js';
-import dotenv from 'dotenv';
-dotenv.config();
+import "dotenv/config"
 
 // Authentication Controllers
 

@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { verifyUser } from '../../middleware/authenticateUser.js';
+import { verifyUser } from '../../middleware/authenticate.js';
 import {
   getLoginPageController,
   postLoginPageController,
