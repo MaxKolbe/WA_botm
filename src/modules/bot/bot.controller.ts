@@ -10,6 +10,7 @@ import {
   createOtpUsageLog,
   getBarredNumber,
   createBarredNumber,
+  createGroup,
 } from './bot.services.js';
 
 export const botRequests = async (req: Request, res: Response) => {
@@ -24,11 +25,6 @@ export const botRequests = async (req: Request, res: Response) => {
     const user = (await getOneEmployee(sender)).data;
 
     const nonUser = await getBarredNumber(sender);
-
-    if (message.startsWith('/')) {
-      console.log('The message actually started with /');
-      return res.redirect('/webhook/broadcast');
-    }
 
     if (!user) {
       if (nonUser.status === 200) {
@@ -163,5 +159,70 @@ If you message NenBot and you don't get a reply within a minute (NenBot is NOT d
     return res.send(
       `<Response><Message>An error occurred. Please try again later.</Message></Response>`,
     );
+  }
+};
+
+export const broadcastController = async (req: Request, res: Response) => {
+  const broadcastActions = {
+    SENDBROADCAST: 'send',
+    CREATEGROUP: 'create group',
+    DELETEGROUP: 'delete group',
+    ADDMEMBER: 'add member',
+    DELETEMEMBER: 'delete member',
+    VIEWGROUP: 'view group',
+    VIEWALLGROUPS: 'view all groups',
+  } as const;
+
+  const broadcastAction = (req.body.Body as string)
+    .toLowerCase()
+    .split('/')[1]!
+    .trim();
+  if (broadcastAction.startsWith(broadcastActions.SENDBROADCAST)) {
+    const message = (req.body.Body as string)
+      .toLowerCase()
+      .split(`${broadcastActions.SENDBROADCAST}`)[1];
+    console.log(broadcastActions.SENDBROADCAST, ':', message);
+  } else if (broadcastAction.startsWith(broadcastActions.CREATEGROUP)) {
+    const message = (req.body.Body as string)
+      .toLowerCase()
+      .split(`${broadcastActions.CREATEGROUP}`)[1]?.trim();
+    console.log(broadcastActions.CREATEGROUP, ':', message);
+    try{
+      const response = await createGroup(message!);
+       return res.send(
+        `<Response><Message>${response.message}</Message></Response>`,
+      );
+    }catch(err){
+         return res.send(
+        `<Response><Message>Group "${message}" could not be created</Message></Response>`,
+      );
+    }
+  } else if (broadcastAction.startsWith(broadcastActions.DELETEGROUP)) {
+    const message = (req.body.Body as string)
+      .toLowerCase()
+      .split(`${broadcastActions.DELETEGROUP}`)[1];
+    console.log(broadcastActions.DELETEGROUP, ':', message);
+  } else if (broadcastAction.startsWith(broadcastActions.ADDMEMBER)) {
+    const message = (req.body.Body as string)
+      .toLowerCase()
+      .split(`${broadcastActions.ADDMEMBER}`)[1];
+    console.log(broadcastActions.ADDMEMBER, ':', message);
+  } else if (broadcastAction.startsWith(broadcastActions.DELETEMEMBER)) {
+    const message = (req.body.Body as string)
+      .toLowerCase()
+      .split(`${broadcastActions.DELETEMEMBER}`)[1];
+    console.log(broadcastActions.DELETEMEMBER, ':', message);
+  } else if (broadcastAction.startsWith(broadcastActions.VIEWGROUP)) {
+    const message = (req.body.Body as string)
+      .toLowerCase()
+      .split(`${broadcastActions.VIEWGROUP}`)[1];
+    console.log(broadcastActions.VIEWGROUP, ':', message);
+  } else if (broadcastAction.startsWith(broadcastActions.VIEWALLGROUPS)) {
+    const message = (req.body.Body as string)
+      .toLowerCase()
+      .split(`${broadcastActions.VIEWALLGROUPS}`)[1];
+    console.log(broadcastActions.VIEWALLGROUPS, ':', message);
+  } else {
+    console.log('There is no precedent for the message sent');
   }
 };

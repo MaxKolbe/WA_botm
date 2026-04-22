@@ -3,6 +3,7 @@ import settingsModel from '../../models/settingsModel.model.js';
 import otpUsageModel from '../../models/otpUsageModel.model.js';
 import barredNumbersModel from '../../models/barredNumbers.model.js';
 import otpModel from '../../models/otpModel.model.js';
+import groupModel from '../../models/group.model.js'
 
 export const getSettingsStats = async () => {
   const settings = await settingsModel.findOne();
@@ -78,3 +79,44 @@ export const createBarredNumber = async (sender: string) => {
     message: 'success',
   };
 };
+
+export const sendBroadcast = async () => {
+  
+  return 
+};
+
+export const createGroup = async (groupName: string) => {
+  const group = await groupModel.create({
+    name: groupName
+  }) 
+  
+  return {
+    message: `Group "${groupName}" created`
+  }
+};
+
+export const deleteGroup = async () => {
+  
+  return 
+};
+
+export const addMember = async () => {
+  
+  return 
+};
+
+export const deleteMember = async () => {
+  
+  return 
+};
+
+export const viewGroup = async () => {
+  
+  return 
+};
+
+export const  viewAllGroups = async () => {
+  
+  return 
+};
+
