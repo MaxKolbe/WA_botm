@@ -12,6 +12,11 @@ import {
   createBarredNumber,
   createGroup,
   addMember,
+  addGroupAdmin,
+  deleteGroup,
+  deleteMember,
+  viewAllGroups,
+  viewGroup,
 } from './bot.services.js';
 
 export const botRequests = async (req: Request, res: Response) => {
@@ -171,10 +176,10 @@ export const broadcastController = async (req: Request, res: Response) => {
     ADDMEMBER: 'add member',
     DELETEMEMBER: 'delete member',
     ADDGROUPADMIN: 'add admin',
-    VIEWGROUP: 'view group',
-    VIEWALLGROUPS: 'view all groups',
+    VIEWGROUPMEMBERS: 'view group',
+    VIEWALLGROUPS: 'view groups',
   } as const;
-  
+
   const sender: string = req.body.From.trim();
   const user = (await getOneEmployee(sender)).data;
 
@@ -188,72 +193,144 @@ export const broadcastController = async (req: Request, res: Response) => {
       .toLowerCase()
       .split(`${broadcastActions.SENDBROADCAST}`)[1];
     console.log(broadcastActions.SENDBROADCAST, ':', message);
+
+    try {
+      // const response = await
+      return res.send(`<Response><Message></Response>`);
+    } catch (err) {
+      return res.send(`<Response><Message></Message></Response>`);
+    }
   } else if (broadcastAction.startsWith(broadcastActions.CREATEGROUP)) {
-    const message = (req.body.Body as string)
+    const groupName = (req.body.Body as string)
       .toLowerCase()
-      .split(`${broadcastActions.CREATEGROUP}`)[1]?.trim();
-    console.log(broadcastActions.CREATEGROUP, ':', message);
-    try{
-      const response = await createGroup(message!, user?.id);
-       return res.send(
+      .split(`${broadcastActions.CREATEGROUP}`)[1]
+      ?.trim();
+    console.log(broadcastActions.CREATEGROUP, ':', groupName);
+    try {
+      const response = await createGroup(groupName!, user?.id);
+      return res.send(
         `<Response><Message>${response.message}</Message></Response>`,
       );
-    }catch(err){
-         return res.send(
-        `<Response><Message>Group "${message}" could not be created</Message></Response>`,
+    } catch (err) {
+      return res.send(
+        `<Response><Message>Group "${groupName}" could not be created</Message></Response>`,
       );
     }
   } else if (broadcastAction.startsWith(broadcastActions.DELETEGROUP)) {
-    const message = (req.body.Body as string)
+    const groupName = (req.body.Body as string)
       .toLowerCase()
-      .split(`${broadcastActions.DELETEGROUP}`)[1];
-    console.log(broadcastActions.DELETEGROUP, ':', message);
+      .split(`${broadcastActions.DELETEGROUP}`)[1]
+      ?.trim();
+    console.log(broadcastActions.DELETEGROUP, ':', groupName);
+
+    try {
+      const response = await deleteGroup(groupName!, user?.id);
+      if (response.code === 404) {
+        return res.send(
+          `<Response><Message>${response.message}</Message></Response>`,
+        );
+      }
+      return res.send(
+        `<Response><Message>${response.message}</Message></Response>`,
+      );
+    } catch (err) {
+      return res.send(
+        `<Response><Message>Could not delete group ${groupName}</Message></Response>`,
+      );
+    }
   } else if (broadcastAction.startsWith(broadcastActions.ADDMEMBER)) {
     const message = (req.body.Body as string)
       .toLowerCase()
       .split(`${broadcastActions.ADDMEMBER}`)[1];
-    const groupName = message?.split(" ")[1]
-    const newMembers = (message?.split(" "))?.slice(2)
+    const groupName = message?.split(' ')[1];
+    const newMembers = message?.split(' ')?.slice(2);
     console.log(broadcastActions.ADDMEMBER, ':', message);
-    console.log(groupName, ":", newMembers)
-    try{
+    console.log(groupName, ':', newMembers);
+    try {
       const response = await addMember(groupName!, newMembers!, user?.id);
-      if(response.code === 404) {
+      if (response.code === 404) {
         return res.send(
-        `<Response><Message>group "${groupName}" not found</Message></Response>`,
-      );
+          `<Response><Message>${response.message}</Message></Response>`,
+        );
       }
-       return res.send(
+      return res.send(
         `<Response><Message>${newMembers} got added to group "${groupName}"</Message></Response>`,
       );
-    }catch(err){
-         return res.send(
+    } catch (err) {
+      return res.send(
         `<Response><Message>"${newMembers}" could not be added</Message></Response>`,
       );
     }
-    console.log(broadcastActions.ADDMEMBER, ':', message);
   } else if (broadcastAction.startsWith(broadcastActions.DELETEMEMBER)) {
     const message = (req.body.Body as string)
       .toLowerCase()
       .split(`${broadcastActions.DELETEMEMBER}`)[1];
+    const groupName = message?.split(' ')[1];
+    const groupMembers = message?.split(' ')?.slice(2);
     console.log(broadcastActions.DELETEMEMBER, ':', message);
-  } else if (broadcastAction.startsWith(broadcastActions.VIEWGROUP)) {
+    console.log(groupName, ':', groupMembers);
+    try {
+      const response = await deleteMember(groupName!, groupMembers!, user?.id);
+      return res.send(
+        `<Response><Message>${response.message}</Message></Response>`,
+      );
+    } catch (err) {
+      return res.send(
+        `<Response><Message>${groupMembers} could not be deleted</Message></Response>`,
+      );
+    }
+  } else if (broadcastAction.startsWith(broadcastActions.VIEWGROUPMEMBERS)) {
     const message = (req.body.Body as string)
       .toLowerCase()
-      .split(`${broadcastActions.VIEWGROUP}`)[1];
-    console.log(broadcastActions.VIEWGROUP, ':', message);
+      .split(`${broadcastActions.VIEWGROUPMEMBERS}`)[1];
+    const groupName = message?.split(' ')[1]?.trim();
+    console.log(broadcastActions.VIEWGROUPMEMBERS, ':', message);
+
+    try {
+      const response = await viewGroup(groupName!, user?.id);
+        if (response.code === 404) {
+        return res.send(
+          `<Response><Message>${response.message}</Message></Response>`,
+        );
+      }
+      return res.send(
+        `<Response><Message>Members of group "${groupName}" include: ${response.data}</Message></Response>`,
+      );
+    } catch (err) {
+      return res.send(
+        `<Response><Message>Could not pull up members of group "${groupName}"</Message></Response>`,
+      );
+    }
   } else if (broadcastAction.startsWith(broadcastActions.VIEWALLGROUPS)) {
-    const message = (req.body.Body as string)
-      .toLowerCase()
-      .split(`${broadcastActions.VIEWALLGROUPS}`)[1];
-    console.log(broadcastActions.VIEWALLGROUPS, ':', message);
-  }
-  else if (broadcastAction.startsWith(broadcastActions.ADDGROUPADMIN)) {
+    try {
+      const response = await viewAllGroups();
+      return res.send(
+        `<Response><Message>Active groups: ${response}</Message></Response>`,
+      );
+    } catch (err) {
+      return res.send(
+        `<Response><Message>Could not view all groups</Message></Response>`,
+      );
+    }
+  } else if (broadcastAction.startsWith(broadcastActions.ADDGROUPADMIN)) {
     const message = (req.body.Body as string)
       .toLowerCase()
       .split(`${broadcastActions.ADDGROUPADMIN}`)[1];
+    const groupName = message?.split(' ')[1];
+    const newAdmins = message?.split(' ')?.slice(2);
     console.log(broadcastActions.ADDGROUPADMIN, ':', message);
+
+    try {
+      const response = await addGroupAdmin(groupName!, newAdmins!, user?.id);
+      return res.send(
+        `<Response><Message>${response.message}</Message></Response>`,
+      );
+    } catch (err) {
+      return res.send(
+        `<Response><Message>"${newAdmins}" could not be made an admin</Message></Response>`,
+      );
+    }
   } else {
-    console.log('There is no precedent for the message sent');
+    console.log('Command does not exist');
   }
 };

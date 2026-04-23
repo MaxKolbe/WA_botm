@@ -81,6 +81,7 @@ export const createBarredNumber = async (sender: string) => {
   };
 };
 
+/**BROADCAST SERVICES */
 export const sendBroadcast = async () => {
   return;
 };
@@ -88,28 +89,12 @@ export const sendBroadcast = async () => {
 export const createGroup = async (groupName: string, userId: string) => {
   await groupModel.create({
     name: groupName,
-    admins: [userId, "69e9d2bfbed6d860599a6666"], //replace the secon with micheal's userID in prod
+    admins: [userId, '69e9d2bfbed6d860599a6666'], //replace the second with micheal's userID in prod
   });
 
   return {
     message: `Group "${groupName}" created`,
   };
-};
-
-export const addGroupAdmin = async (groupName: string, userId: string, userIds: string[]) => {
-
-await groupModel.updateOne(
-    { name: groupName, admins: { $in: userId },},
-    { $addToSet: { admins: { $each: userIds } } },
-  );
-
-  return {
-    message: ``
-  }
-};
-
-export const deleteGroup = async () => {
-  return;
 };
 
 export const addMember = async (
@@ -121,11 +106,12 @@ export const addMember = async (
   const group = await groupModel.findOne({
     name: groupName,
     admins: { $in: userId },
-  }); // how would an admin know they aren't an admin in that group
+  });
 
   if (!group) {
     return {
       code: 404,
+      message: `group "${groupName}" not found`,
     };
   }
 
@@ -150,14 +136,125 @@ export const addMember = async (
   return {};
 };
 
-export const deleteMember = async () => {
-  return;
+export const addGroupAdmin = async (
+  groupName: string,
+  newAdmins: string[],
+  userId: string,
+) => {
+  //transformation to add whatsapp: to phone numbers
+  let employeePhones: string[] = [];
+  newAdmins.forEach((newAdmin) => {
+    employeePhones.push(`whatsapp:${newAdmin}`);
+  });
+
+  //query employee collection while avoiding n+1
+  const employees = await employeeModel.find({
+    phone: { $in: employeePhones },
+  });
+  const employeeIds: ObjectId[] = employees.map((employee) => employee.id);
+
+  await groupModel.updateOne(
+    { name: groupName, admins: { $in: userId } },
+    { $addToSet: { admins: { $each: employeeIds } } },
+  );
+
+  return {
+    message: `${newAdmins} is now an admin of group "${groupName}"`,
+  };
 };
 
-export const viewGroup = async () => {
-  return;
+export const deleteGroup = async (groupName: string, userId: string) => {
+  const group = await groupModel.findOne({
+    name: groupName,
+    admins: { $in: userId },
+  });
+
+  if (!group) {
+    return {
+      code: 404,
+      message: `group "${groupName}" not found`,
+    };
+  }
+
+  await groupModel.findOneAndDelete({
+    name: groupName,
+  });
+
+  return {
+    message: `Group "${groupName}" deleted successfully`,
+  };
+};
+
+export const deleteMember = async (
+  groupName: string,
+  groupMembers: string[],
+  userId: string,
+) => {
+  const group = await groupModel.findOne({
+    name: groupName,
+    admins: { $in: userId },
+  });
+
+  if (!group) {
+    return {
+      code: 404,
+      message: `group "${groupName}" not found`,
+    };
+  }
+
+  //transformation to add whatsapp: to phone numbers
+  let employeePhones: string[] = [];
+  groupMembers.forEach((groupMember) => {
+    employeePhones.push(`whatsapp:${groupMember}`);
+  });
+
+  //query employee collection while avoiding n+1
+  const employees = await employeeModel.find({
+    phone: { $in: employeePhones },
+  });
+  const employeeIds: ObjectId[] = employees.map((employee) => employee.id);
+
+  // delete members from the group
+  await groupModel.updateOne(
+    { name: groupName, admins: { $in: userId } },
+    { $pull: { members: { $in: employeeIds } } },
+  );
+
+  return {
+    message: `${groupMembers} deleted from group "${groupName}"`,
+  };
+};
+
+export const viewGroup = async (groupName: string, userId: string) => {
+  const group = await groupModel.findOne({
+    name: groupName,
+    admins: { $in: userId },
+  });
+
+  if (!group) {
+    return {
+      code: 404,
+      message: `group "${groupName}" not found`,
+    };
+  }
+
+  const employeeIds: ObjectId[] = group.members.map((member) => member);
+
+  const employees = await employeeModel.find({
+    _id: { $in: employeeIds },
+  });
+
+  const employeeNames: string[] = employees.map((employee) => employee.name);
+
+  return {
+    data: employeeNames
+  };
 };
 
 export const viewAllGroups = async () => {
-  return;
+  const groups = await groupModel.find({
+    admins: { $in: '69e9d2bfbed6d860599a6666' }, //replace the second with micheal's userID in prod
+  });
+  const groupNames: string[] = groups.map((group) => group.name);
+  return groupNames;
 };
