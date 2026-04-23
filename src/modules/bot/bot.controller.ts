@@ -11,6 +11,7 @@ import {
   getBarredNumber,
   createBarredNumber,
   createGroup,
+  addMember,
 } from './bot.services.js';
 
 export const botRequests = async (req: Request, res: Response) => {
@@ -169,14 +170,19 @@ export const broadcastController = async (req: Request, res: Response) => {
     DELETEGROUP: 'delete group',
     ADDMEMBER: 'add member',
     DELETEMEMBER: 'delete member',
+    ADDGROUPADMIN: 'add admin',
     VIEWGROUP: 'view group',
     VIEWALLGROUPS: 'view all groups',
   } as const;
+  
+  const sender: string = req.body.From.trim();
+  const user = (await getOneEmployee(sender)).data;
 
   const broadcastAction = (req.body.Body as string)
     .toLowerCase()
     .split('/')[1]!
     .trim();
+
   if (broadcastAction.startsWith(broadcastActions.SENDBROADCAST)) {
     const message = (req.body.Body as string)
       .toLowerCase()
@@ -188,7 +194,7 @@ export const broadcastController = async (req: Request, res: Response) => {
       .split(`${broadcastActions.CREATEGROUP}`)[1]?.trim();
     console.log(broadcastActions.CREATEGROUP, ':', message);
     try{
-      const response = await createGroup(message!);
+      const response = await createGroup(message!, user?.id);
        return res.send(
         `<Response><Message>${response.message}</Message></Response>`,
       );
@@ -206,6 +212,25 @@ export const broadcastController = async (req: Request, res: Response) => {
     const message = (req.body.Body as string)
       .toLowerCase()
       .split(`${broadcastActions.ADDMEMBER}`)[1];
+    const groupName = message?.split(" ")[1]
+    const newMembers = (message?.split(" "))?.slice(2)
+    console.log(broadcastActions.ADDMEMBER, ':', message);
+    console.log(groupName, ":", newMembers)
+    try{
+      const response = await addMember(groupName!, newMembers!, user?.id);
+      if(response.code === 404) {
+        return res.send(
+        `<Response><Message>group "${groupName}" not found</Message></Response>`,
+      );
+      }
+       return res.send(
+        `<Response><Message>${newMembers} got added to group "${groupName}"</Message></Response>`,
+      );
+    }catch(err){
+         return res.send(
+        `<Response><Message>"${newMembers}" could not be added</Message></Response>`,
+      );
+    }
     console.log(broadcastActions.ADDMEMBER, ':', message);
   } else if (broadcastAction.startsWith(broadcastActions.DELETEMEMBER)) {
     const message = (req.body.Body as string)
@@ -222,6 +247,12 @@ export const broadcastController = async (req: Request, res: Response) => {
       .toLowerCase()
       .split(`${broadcastActions.VIEWALLGROUPS}`)[1];
     console.log(broadcastActions.VIEWALLGROUPS, ':', message);
+  }
+  else if (broadcastAction.startsWith(broadcastActions.ADDGROUPADMIN)) {
+    const message = (req.body.Body as string)
+      .toLowerCase()
+      .split(`${broadcastActions.ADDGROUPADMIN}`)[1];
+    console.log(broadcastActions.ADDGROUPADMIN, ':', message);
   } else {
     console.log('There is no precedent for the message sent');
   }

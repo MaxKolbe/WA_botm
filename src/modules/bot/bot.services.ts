@@ -3,7 +3,8 @@ import settingsModel from '../../models/settingsModel.model.js';
 import otpUsageModel from '../../models/otpUsageModel.model.js';
 import barredNumbersModel from '../../models/barredNumbers.model.js';
 import otpModel from '../../models/otpModel.model.js';
-import groupModel from '../../models/group.model.js'
+import groupModel from '../../models/group.model.js';
+import { ObjectId } from 'mongoose';
 
 export const getSettingsStats = async () => {
   const settings = await settingsModel.findOne();
@@ -81,42 +82,82 @@ export const createBarredNumber = async (sender: string) => {
 };
 
 export const sendBroadcast = async () => {
-  
-  return 
+  return;
 };
 
-export const createGroup = async (groupName: string) => {
-  const group = await groupModel.create({
-    name: groupName
-  }) 
-  
+export const createGroup = async (groupName: string, userId: string) => {
+  await groupModel.create({
+    name: groupName,
+    admins: [userId, "69e9d2bfbed6d860599a6666"], //replace the secon with micheal's userID in prod
+  });
+
   return {
-    message: `Group "${groupName}" created`
+    message: `Group "${groupName}" created`,
+  };
+};
+
+export const addGroupAdmin = async (groupName: string, userId: string, userIds: string[]) => {
+
+await groupModel.updateOne(
+    { name: groupName, admins: { $in: userId },},
+    { $addToSet: { admins: { $each: userIds } } },
+  );
+
+  return {
+    message: ``
   }
 };
 
 export const deleteGroup = async () => {
-  
-  return 
+  return;
 };
 
-export const addMember = async () => {
-  
-  return 
+export const addMember = async (
+  groupName: string,
+  newMembers: string[],
+  userId: string,
+) => {
+  // check if group exists
+  const group = await groupModel.findOne({
+    name: groupName,
+    admins: { $in: userId },
+  }); // how would an admin know they aren't an admin in that group
+
+  if (!group) {
+    return {
+      code: 404,
+    };
+  }
+
+  //transformation to add whatsapp: to phone numbers
+  let employeePhones: string[] = [];
+  newMembers.forEach((newMember) => {
+    employeePhones.push(`whatsapp:${newMember}`);
+  });
+
+  //query employee collection while avoiding n+1
+  const employees = await employeeModel.find({
+    phone: { $in: employeePhones },
+  });
+  const employeeIds: ObjectId[] = employees.map((employee) => employee.id);
+
+  // add members to the group
+  await groupModel.updateOne(
+    { name: groupName },
+    { $addToSet: { members: { $each: employeeIds } } },
+  );
+
+  return {};
 };
 
 export const deleteMember = async () => {
-  
-  return 
+  return;
 };
 
 export const viewGroup = async () => {
-  
-  return 
+  return;
 };
 
-export const  viewAllGroups = async () => {
-  
-  return 
+export const viewAllGroups = async () => {
+  return;
 };
-

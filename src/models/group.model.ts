@@ -3,7 +3,8 @@ import { required } from 'zod/mini';
 
 export interface IGroup extends Document {
   name: string;
-  otpLogs: ObjectId[];
+  admins: ObjectId[];
+  members: ObjectId[];
 }
 
 const GroupSchema: Schema = new Schema(

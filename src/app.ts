@@ -23,8 +23,8 @@ app.use('/', adminRouter);
 app.use('/webhook', botRouter);
 app.use('/public-stats', visualizerRouter);
 
-import { sendWhatsAppMessage } from './utils/botFunctions.js';
-await sendWhatsAppMessage("whatsapp:+2347042274824", "HELLO FROM NODEJ")
+// import { sendWhatsAppMessage } from './utils/botFunctions.js';
+// await sendWhatsAppMessage("whatsapp:+2347042274824", "HELLO FROM NODEJ")
  
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   console.log(`Internal Server Error: ${err.message} \n ${err.cause} \n ${err.stack}`);
