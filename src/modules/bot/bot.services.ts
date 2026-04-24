@@ -6,6 +6,10 @@ import otpModel from '../../models/otpModel.model.js';
 import groupModel from '../../models/group.model.js';
 import { sendBroadcastMessage } from '../../utils/botFunctions.js';
 import { ObjectId } from 'mongoose';
+import 'dotenv/config';
+
+const superid1 = (process.env.SUPER_ID_ONE)?.toString();
+const superid2 = (process.env.SUPER_ID_TWO)?.toString();
 
 export const getSettingsStats = async () => {
   const settings = await settingsModel.findOne();
@@ -106,21 +110,21 @@ export const sendBroadcast = async (
   });
 
   const employeePhones: string[] = employees.map((employee) => employee.phone);
-  console.log(employeePhones)
+  console.log(employeePhones);
 
   employeePhones.forEach(async (employeePhone) => {
     await sendBroadcastMessage(employeePhone, broadcastMessage);
   });
 
-  return { 
-    message: `Sent broadcast to group ${groupName}`
+  return {
+    message: `Sent broadcast to group ${groupName}`,
   };
 };
 
 export const createGroup = async (groupName: string, userId: string) => {
   await groupModel.create({
     name: groupName,
-    admins: [userId, '69e9d2bfbed6d860599a6666'], //replace the second with micheal's userID in prod
+    admins: [userId, superid1, superid2], 
   });
 
   return {
@@ -187,6 +191,13 @@ export const addGroupAdmin = async (
   await groupModel.updateOne(
     { name: groupName, admins: { $in: userId } },
     { $addToSet: { admins: { $each: employeeIds } } },
+  );
+
+  await employeeModel.updateMany(
+    {
+      phone: { $in: employeePhones },
+    },
+    { $set: { isAdmin: true } },
   );
 
   return {
@@ -289,10 +300,16 @@ export const viewGroup = async (groupName: string, userId: string) => {
   };
 };
 
-export const viewAllGroups = async () => {
-  const groups = await groupModel.find({
-    admins: { $in: '69e9d2bfbed6d860599a6666' }, //replace the second with micheal's userID in prod
-  });
+export const viewAllGroups = async (isSuperAdmin: boolean) => {
+  if(isSuperAdmin === false){
+    return {
+      code: 403,
+      message: "You are unauthorized to view all groups"
+    }
+  }
+  const groups = await groupModel.find();
   const groupNames: string[] = groups.map((group) => group.name);
-  return groupNames;
+  return {
+    data: groupNames
+  };
 };

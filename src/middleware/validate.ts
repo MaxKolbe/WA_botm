@@ -10,8 +10,8 @@ export const validate =
     });
 
     if (result.success === false) {
-       next();
+      next();
     } else {
-        return res.redirect('/webhook/broadcast');
+      return res.redirect('/webhook/broadcast');
     }
   };

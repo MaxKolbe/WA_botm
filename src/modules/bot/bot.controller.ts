@@ -178,7 +178,7 @@ export const broadcastController = async (req: Request, res: Response) => {
     DELETEMEMBER: 'delete member',
     ADDGROUPADMIN: 'add admin',
     VIEWGROUPMEMBERS: 'view group',
-    VIEWALLGROUPS: 'view groups',
+    VIEWALLGROUPS: 'view all groups',
     HELP: 'help',
   } as const;
 
@@ -327,9 +327,14 @@ export const broadcastController = async (req: Request, res: Response) => {
     }
   } else if (broadcastAction.startsWith(broadcastActions.VIEWALLGROUPS)) {
     try {
-      const response = await viewAllGroups();
+      const response = await viewAllGroups(user!.isSuperAdmin);
+      if(response.code === 403){
+        return res.send(
+        `<Response><Message> ${response.message}</Message></Response>`,
+      );
+      }
       return res.send(
-        `<Response><Message>Active groups: ${response}</Message></Response>`,
+        `<Response><Message>Active groups: ${response.data}</Message></Response>`,
       );
     } catch (err) {
       return res.send(
@@ -377,7 +382,7 @@ Here are the list of available commands:
 
 /VIEW GROUP groupname --> lists all members of a broadcast group (groupname)
 
-/VIEW GROUPS --> list all broadcast groups
+/VIEW ALL GROUPS --> list all broadcast groups
 
 /HELP --> lists all commanda
   </Message>

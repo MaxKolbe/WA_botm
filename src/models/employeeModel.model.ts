@@ -3,6 +3,8 @@ import mongoose, { Document, Schema, ObjectId } from 'mongoose';
 export interface IEmployee extends Document {
   name: string;
   phone: string;
+  isAdmin: boolean;
+  isSuperAdmin: boolean;
   enabled: boolean;
   attempts: number;
   queried: boolean;
@@ -20,6 +22,14 @@ const EmployeeSchema: Schema = new Schema(
     },
     phone: {
       type: String,
+    },
+    isAdmin: {
+      type: Boolean,
+      default: false
+    },
+    isSuperAdmin: {
+      type: Boolean,
+      default: false
     },
     enabled: {
       type: Boolean,
