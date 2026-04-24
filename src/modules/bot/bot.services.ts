@@ -4,6 +4,7 @@ import otpUsageModel from '../../models/otpUsageModel.model.js';
 import barredNumbersModel from '../../models/barredNumbers.model.js';
 import otpModel from '../../models/otpModel.model.js';
 import groupModel from '../../models/group.model.js';
+import { sendBroadcastMessage } from '../../utils/botFunctions.js';
 import { ObjectId } from 'mongoose';
 
 export const getSettingsStats = async () => {
@@ -82,8 +83,38 @@ export const createBarredNumber = async (sender: string) => {
 };
 
 /**BROADCAST SERVICES */
-export const sendBroadcast = async () => {
-  return;
+export const sendBroadcast = async (
+  groupName: string,
+  userId: string,
+  broadcastMessage: string,
+) => {
+  const group = await groupModel.findOne({
+    name: groupName,
+    admins: { $in: userId },
+  });
+
+  if (!group) {
+    return {
+      code: 404,
+      message: `group "${groupName}" not found`,
+    };
+  }
+
+  const employeeIds: ObjectId[] = group.members.map((member) => member);
+  const employees = await employeeModel.find({
+    _id: { $in: employeeIds },
+  });
+
+  const employeePhones: string[] = employees.map((employee) => employee.phone);
+  console.log(employeePhones)
+
+  employeePhones.forEach(async (employeePhone) => {
+    await sendBroadcastMessage(employeePhone, broadcastMessage);
+  });
+
+  return { 
+    message: `Sent broadcast to group ${groupName}`
+  };
 };
 
 export const createGroup = async (groupName: string, userId: string) => {
@@ -245,9 +276,16 @@ export const viewGroup = async (groupName: string, userId: string) => {
   });
 
   const employeeNames: string[] = employees.map((employee) => employee.name);
+  let employeePhones: string[] = [];
 
+  employees.forEach((employee) => {
+    employeePhones.push(
+      employee.name.concat(' phonenumber: ').concat(employee.phone),
+    );
+  });
+  console.log(employeePhones);
   return {
-    data: employeeNames
+    data: employeePhones,
   };
 };
 

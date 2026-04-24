@@ -17,6 +17,7 @@ import {
   deleteMember,
   viewAllGroups,
   viewGroup,
+  sendBroadcast,
 } from './bot.services.js';
 
 export const botRequests = async (req: Request, res: Response) => {
@@ -178,6 +179,7 @@ export const broadcastController = async (req: Request, res: Response) => {
     ADDGROUPADMIN: 'add admin',
     VIEWGROUPMEMBERS: 'view group',
     VIEWALLGROUPS: 'view groups',
+    HELP: 'help',
   } as const;
 
   const sender: string = req.body.From.trim();
@@ -192,13 +194,35 @@ export const broadcastController = async (req: Request, res: Response) => {
     const message = (req.body.Body as string)
       .toLowerCase()
       .split(`${broadcastActions.SENDBROADCAST}`)[1];
-    console.log(broadcastActions.SENDBROADCAST, ':', message);
+    const groupName = message?.split(' ')[1];
+    const broadcastMessage = message?.split(groupName!.toString())[1];
+    console.log(
+      broadcastActions.SENDBROADCAST,
+      ':',
+      groupName,
+      ':',
+      broadcastMessage,
+    );
 
     try {
-      // const response = await
-      return res.send(`<Response><Message></Response>`);
+      const response = await sendBroadcast(
+        groupName!,
+        user?.id,
+        broadcastMessage!,
+      );
+
+      if (response.code === 404) {
+        return res.send(
+          `<Response><Message> ${response.message}</Message></Response>`,
+        );
+      }
+      return res.send(
+        `<Response><Message>${response.message}</Message></Response>`,
+      );
     } catch (err) {
-      return res.send(`<Response><Message></Message></Response>`);
+      return res.send(
+        `<Response><Message>Could not send broadcast to group ${groupName}</Message></Response>`,
+      );
     }
   } else if (broadcastAction.startsWith(broadcastActions.CREATEGROUP)) {
     const groupName = (req.body.Body as string)
@@ -288,7 +312,7 @@ export const broadcastController = async (req: Request, res: Response) => {
 
     try {
       const response = await viewGroup(groupName!, user?.id);
-        if (response.code === 404) {
+      if (response.code === 404) {
         return res.send(
           `<Response><Message>${response.message}</Message></Response>`,
         );
@@ -330,7 +354,37 @@ export const broadcastController = async (req: Request, res: Response) => {
         `<Response><Message>"${newAdmins}" could not be made an admin</Message></Response>`,
       );
     }
+  } else if (
+    broadcastAction.startsWith(broadcastActions.HELP) ||
+    broadcastAction === 'h'
+  ) {
+    res.send(`
+<Response>
+  <Message> 
+Here are the list of available commands:
+
+/SEND groupname message --> sends a broadcast (message) to a group (groupname) 
+
+/CREATE GROUP groupname --> creates a broadcast group (groupname)
+
+/DELETE GROUP groupname --> deletes a broadcast group (groupname)
+
+/ADD MEMBER groupname member/s --> adds one or more members to a broadcast group (groupname). member/s must be a valid phonenumber in countrycode format i.e. +2348066698219. To add more than one member write down another valid phonenumber in countrycode format e.g. /ADD MEMBER examplegroup +2348066698219 +2349068601193
+
+/DELETE MEMBER groupname member/s --> deletes one or more members from a broadcast group (groupname). member/s must be a valid phonenumber in countrycode format i.e. +2348066698219. To delete more than one member write down another valid phonenumber in countrycode format e.g. /DELETE MEMBER examplegroup +2348066698219 +2349068601193
+
+/ADD ADMIN groupname adminphone/s --> makes one or more people an admin to a broadcast group (groupname). adminphone/s must be a valid phonenumber in countrycode format i.e. +2348066698219. To add more than one admin write down another valid phonenumber in countrycode format e.g. /ADD ADMIN examplegroup +2348066698219 +2349068601193
+
+/VIEW GROUP groupname --> lists all members of a broadcast group (groupname)
+
+/VIEW GROUPS --> list all broadcast groups
+
+/HELP --> lists all commanda
+  </Message>
+</Response>`);
   } else {
-    console.log('Command does not exist');
+    return res.send(
+      `<Response><Message>Command does not exist</Message></Response>`,
+    );
   }
 };
