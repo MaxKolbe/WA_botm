@@ -3,6 +3,15 @@ import jwt, { JwtPayload } from 'jsonwebtoken';
 import dotenv from 'dotenv';
 dotenv.config();
 
+declare global {
+  namespace Express {
+    interface Request {
+      user?: { id: string};
+    }
+  }
+}
+
+// make sure to redirect properly based on superadmin and admin
 export const verifyUser = (req: Request, res: Response, next: NextFunction) => {
   const token = req.cookies.admin;
   if (token) {
@@ -11,14 +20,14 @@ export const verifyUser = (req: Request, res: Response, next: NextFunction) => {
       process.env.JWTSECRET as string,
       (
         err: jwt.VerifyErrors | null,
-        decoded: string | JwtPayload | undefined,
+        decoded: any
       ) => {
         if (err) {
           res
             .status(500)
             .redirect('/?error=Error+authenticating+user+Login+again');
         } else {
-          // req.user = decoded
+          req.user = {id: decoded.id }
           next();
         }
       },

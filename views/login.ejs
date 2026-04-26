@@ -10,19 +10,14 @@
 
 <body>
   <form method="POST" action="/login">
-    <% if (req.query.error === "Incorrect password love") { %>
+    <% if (req.query.error) { %>
         <span id="popup"  style="color: red;"><h3><%= req.query.error%></h3></span>
     <% } %>
-    <% if (req.query.error === "An error occurred during login") { %>
-        <span id="popup"  style="color: red;"><h3><%= req.query.error%></h3></span>
-    <% } %>
-    <% if (req.query.error === "Error authenticating user Login again") { %>
-        <span id="popup" style="color: red;"><h3><%= req.query.error%></h3></span>
-    <% } %>
-    <% if (req.query.message === "Logged out successfully") { %>
+    <% if (req.query.message) { %>
         <span id="popup" style="color: green;"><h3><%= req.query.message%></h3></span>
     <% } %>
     <h2>Hello Michael, Please Log In</h2>
+    <input type="text" name="phone" placeholder="Enter +countrycodePhonenumber" required />
     <input type="password" name="password" placeholder="Enter Password" required />
     <button type="submit">Login</button>
   </form>

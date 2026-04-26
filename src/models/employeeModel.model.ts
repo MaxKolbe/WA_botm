@@ -12,6 +12,7 @@ export interface IEmployee extends Document {
   firsttimeResetAt: Date;
   queriedResetAt: Date;
   attemptsResetAt: Date;
+  password: string;
   otpLogs: ObjectId[];
 }
 
@@ -57,6 +58,10 @@ const EmployeeSchema: Schema = new Schema(
     },
     attemptsResetAt: {
       type: Date,
+      default: null,
+    },
+    password: {
+      type: String,
       default: null,
     },
     otpLogs: [

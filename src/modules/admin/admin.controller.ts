@@ -17,7 +17,9 @@ import {
   deleteAllLogs,
   searchLogs,
 } from './admin.services.js';
-import "dotenv/config"
+import bcrypt from 'bcrypt';
+import 'dotenv/config';
+import employeeModel from '../../models/employeeModel.model.js';
 
 // Authentication Controllers
 
@@ -28,14 +30,23 @@ export const getLoginPageController = async (req: Request, res: Response) => {
 // Login Controller
 export const postLoginPageController = async (req: Request, res: Response) => {
   try {
-    const { password } = req.body;
+    const { password, phone } = req.body;
+    const employee = await employeeModel.findOne({
+      phone: `whatsapp:${phone}`,
+    });
 
-    if (password === (process.env.ADMIN as string)) {
-      const token = signJwt(password);
-      res.cookie('admin', token, { httpOnly: true }); //save the jwt as a cookie
-      res.status(200).redirect('/home');
+    if (!employee) {
+      return res.status(404).redirect('/?error=user+not+found');
+    }
+
+    const isVerified = await bcrypt.compare(password, employee.password);
+
+    if (isVerified) {
+      const token = signJwt(employee.id);
+      res.cookie('admin', token, { httpOnly: true });
+      return res.status(200).redirect('/home');
     } else {
-      res.status(404).redirect('/?error=Incorrect+password+love');
+      return res.status(404).redirect('/?error=Incorrect+password+love');
     }
   } catch (err) {
     console.error('An error occured at postLoginPageController', err);

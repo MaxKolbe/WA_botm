@@ -110,7 +110,7 @@ export const sendBroadcast = async (
   });
 
   const employeePhones: string[] = employees.map((employee) => employee.phone);
-  console.log(employeePhones);
+  // console.log(employeePhones);
 
   employeePhones.forEach(async (employeePhone) => {
     await sendBroadcastMessage(employeePhone, broadcastMessage);
@@ -210,6 +210,7 @@ export const deleteGroup = async (groupName: string, userId: string) => {
     name: groupName,
     admins: { $in: userId },
   });
+  console.log(userId)
 
   if (!group) {
     return {
@@ -255,7 +256,7 @@ export const deleteMember = async (
     phone: { $in: employeePhones },
   });
   const employeeIds: ObjectId[] = employees.map((employee) => employee.id);
-
+console.log("employeeIds", employeeIds)
   // delete members from the group
   await groupModel.updateOne(
     { name: groupName, admins: { $in: userId } },
@@ -287,16 +288,16 @@ export const viewGroup = async (groupName: string, userId: string) => {
   });
 
   const employeeNames: string[] = employees.map((employee) => employee.name);
-  let employeePhones: string[] = [];
+  let groupMembers: string[] = [];
 
   employees.forEach((employee) => {
-    employeePhones.push(
+    groupMembers.push(
       employee.name.concat(' phonenumber: ').concat(employee.phone),
     );
   });
-  console.log(employeePhones);
+  // console.log(groupMembers);
   return {
-    data: employeePhones,
+    data: groupMembers,
   };
 };
 

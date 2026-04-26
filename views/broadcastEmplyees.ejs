@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script
+      src="https://kit.fontawesome.com/5e2b46074f.js"
+      crossorigin="anonymous"
+    ></script>
+    <link rel="stylesheet" href="/broadcastEmployee.css" />
+    <link rel="shortcut icon" href="/bitimg.png" type="image/x-icon" />
+    <title>Group Employees</title>
+  </head>
+
+  <body>
+<div class="body">
+  <div id="toast"></div>
+  <div class="container">
+    <% if (req.query.error) { %>
+      <span id="popup"  style="color: red;"><h3><%= req.query.error%></h3></span>
+    <% } %>
+    <% if (req.query.message) { %>
+      <span id="popup"  style="color: green;"><h3><%= req.query.message%></h3></span>
+    <% } %>
+    <h2>All Broadcast Groups</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Member</th>
+          <th>Phone number</th>
+          <th>Remove member</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% groupMembers.forEach(groupMember => { %>
+          <tr>
+            <td data-label="Group Member">
+              <span><%= groupMember.toString().split(": whatsapp:")[0] %></span>
+            </td>
+              <td data-label="Phone">
+              <span>whatsapp:<%= groupMember.toString().split(": whatsapp:")[1] %></span>
+            </td>
+            <td data-label="Remove member"> 
+              <form action="/admin-broadcast/deleteOneMember/<%=groupName%>/<%= groupMember.toString().split(": whatsapp:")[1]%>?_method=DELETE" method="POST"  onsubmit="return confirmDelete()">
+                <button class="delete-btn" style="color: red;" ><i class="fa-solid fa-trash" ></i></button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+  <script>
+    function showToast(message) {
+      const toast = document.getElementById("toast")
+      toast.textContent = message
+      toast.className = "show"
+      setTimeout(() => {
+        toast.className = toast.className.replace("show", "")
+      }, 4000)
+    }
+
+    // JavaScript to hide the error message after 3 seconds
+window.onload = function() {
+  const popup = document.getElementById('popup')
+  // console.log("there is an error:", popup)
+  if (popup) {
+    setTimeout(() => {
+      popup.style.display = 'none'
+    }, 3000) // 3 seconds
+  }
+}
+
+  function confirmDelete() {
+    return confirm("Are you sure you want to remove this member? This action is permanent and cannot be undone.")
+  }
+  </script>
+  </body>
+</html>

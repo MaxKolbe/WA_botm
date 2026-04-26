@@ -47,5 +47,5 @@ export const sendBroadcastMessage = async (
     to: `${receiverPhoneNumber}`,
   });
 
-  console.log(message)
+  // console.log(message)
 };
