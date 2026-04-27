@@ -8,8 +8,8 @@ import { sendBroadcastMessage } from '../../utils/botFunctions.js';
 import { ObjectId } from 'mongoose';
 import 'dotenv/config';
 
-const superid1 = (process.env.SUPER_ID_ONE)?.toString();
-const superid2 = (process.env.SUPER_ID_TWO)?.toString();
+const superid1 = process.env.SUPER_ID_ONE?.toString();
+const superid2 = process.env.SUPER_ID_TWO?.toString();
 
 export const getSettingsStats = async () => {
   const settings = await settingsModel.findOne();
@@ -124,7 +124,7 @@ export const sendBroadcast = async (
 export const createGroup = async (groupName: string, userId: string) => {
   await groupModel.create({
     name: groupName,
-    admins: [userId, superid1, superid2], 
+    admins: [userId, superid1, superid2],
   });
 
   return {
@@ -205,12 +205,53 @@ export const addGroupAdmin = async (
   };
 };
 
+export const removeGroupAdmin = async (
+  groupName: string,
+  newAdmins: string[],
+  userId: string,
+) => {
+  //transformation to add whatsapp: to phone numbers
+  let employeePhones: string[] = [];
+  newAdmins.forEach((newAdmin) => {
+    employeePhones.push(`whatsapp:${newAdmin}`);
+  });
+
+  //query employee collection while avoiding n+1
+  const employees = await employeeModel.find({
+    phone: { $in: employeePhones },
+  });
+  const employeeIds: ObjectId[] = employees.map((employee) => employee.id);
+
+  await groupModel.updateOne(
+    { name: groupName, admins: { $in: userId } },
+    { $pull: { admins: { $in: employeeIds } } }
+  );
+
+  // check if user is admin in other groups
+  const administrator = await groupModel.find({
+    admins: { $in: employeeIds },
+  });
+
+  if (administrator.length <= 0) {
+    await employeeModel.updateMany(
+      {
+        phone: { $in: employeePhones },
+      },
+      { $set: { isAdmin: false } },
+    );
+  }
+
+  return {
+    message: `${newAdmins} is no longer an admin of group "${groupName}"`,
+  };
+};
+
 export const deleteGroup = async (groupName: string, userId: string) => {
   const group = await groupModel.findOne({
     name: groupName,
     admins: { $in: userId },
   });
-  console.log(userId)
+  console.log(userId);
 
   if (!group) {
     return {
@@ -256,7 +297,7 @@ export const deleteMember = async (
     phone: { $in: employeePhones },
   });
   const employeeIds: ObjectId[] = employees.map((employee) => employee.id);
-console.log("employeeIds", employeeIds)
+  console.log('employeeIds', employeeIds);
   // delete members from the group
   await groupModel.updateOne(
     { name: groupName, admins: { $in: userId } },
@@ -302,15 +343,15 @@ export const viewGroup = async (groupName: string, userId: string) => {
 };
 
 export const viewAllGroups = async (isSuperAdmin: boolean) => {
-  if(isSuperAdmin === false){
+  if (isSuperAdmin === false) {
     return {
       code: 403,
-      message: "You are unauthorized to view all groups"
-    }
+      message: 'You are unauthorized to view all groups',
+    };
   }
   const groups = await groupModel.find();
   const groupNames: string[] = groups.map((group) => group.name);
   return {
-    data: groupNames
+    data: groupNames,
   };
 };

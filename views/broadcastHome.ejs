@@ -44,12 +44,12 @@
             </td>
             <td data-label="Send broadcast"> 
               <form action="/admin-broadcast/send/<%=group.name%>" method="POST"  onsubmit="return confirmSend()">
-                <textarea name="message" id="message" placeholder="Write message" style="margin-right: .4rem;"></textarea>
+                <textarea name="message" id="message" placeholder="Write message" style="margin-right: .4rem;" required></textarea>
                 <button class="delete-btn" style="color: blue;"><i class="fa-solid fa-paper-plane"></i></button>
               </form>
             </td>
             <td data-label="Add member/admin"> 
-              <a href="" style="color: green;"><i class="fa-solid fa-user-plus"></i></a>
+              <a href="/admin-broadcast/adminops/<%=group.name%>" style="color: green;"><i class="fa-solid fa-user-plus"></i></a>
             </td>
             <td data-label="Delete group"> 
               <form action="/admin-broadcast/deleteOneGroup/<%=group.name%>?_method=DELETE" method="POST"  onsubmit="return confirmDelete()">

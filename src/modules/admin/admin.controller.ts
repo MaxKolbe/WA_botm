@@ -44,6 +44,10 @@ export const postLoginPageController = async (req: Request, res: Response) => {
     if (isVerified) {
       const token = signJwt(employee.id);
       res.cookie('admin', token, { httpOnly: true });
+      if(employee.isSuperAdmin === false){
+        return res.status(200).redirect('/admin-broadcast');
+      }
+
       return res.status(200).redirect('/home');
     } else {
       return res.status(404).redirect('/?error=Incorrect+password+love');

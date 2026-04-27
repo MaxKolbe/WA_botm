@@ -22,7 +22,7 @@
     <% if (req.query.message) { %>
       <span id="popup"  style="color: green;"><h3><%= req.query.message%></h3></span>
     <% } %>
-    <h2>All Broadcast Groups</h2>
+    <h2><%=groupName%></h2>
     <table>
       <thead>
         <tr>
@@ -35,7 +35,7 @@
         <% groupMembers.forEach(groupMember => { %>
           <tr>
             <td data-label="Group Member">
-              <span><%= groupMember.toString().split(": whatsapp:")[0] %></span>
+              <span><%= groupMember.toString().split("phonenumber: whatsapp:")[0] %></span>
             </td>
               <td data-label="Phone">
               <span>whatsapp:<%= groupMember.toString().split(": whatsapp:")[1] %></span>

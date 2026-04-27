@@ -10,35 +10,11 @@
 </head>
 
 <body>
-    <% if (req.query.error === "Error occured while creating phrase") { %>
+    <% if (req.query.error) { %>
         <span id="popup" style="color: red;"><h3><%= req.query.error%></h3></span>
     <% } %>
-      <% if (req.query.error === "Error occured while toggling bot") { %>
-        <span id="popup" style="color: red;"><h3><%= req.query.error%></h3></span>
-    <% } %>
-    <% if (req.query.error === "Error occured while adding employees") { %>
-        <span id="popup" style="color: red;"><h3><%= req.query.error%></h3></span>
-    <% } %>
-    <% if (req.query.error === "Error occured while removing employees") { %>
-        <span id="popup" style="color: red;"><h3><%= req.query.error%></h3></span>
-    <% } %>
-    <% if (req.query.error === "Otp does not exist") { %>
-        <span id="popup" style="color: red;"><h3><%= req.query.error%></h3></span>
-    <% } %>
-    <% if (req.query.message === "Phrase Updated") { %>
+    <% if (req.query.message) { %>
         <span id="popup" style="color: green;"><h3><%= req.query.message%></h3></span>
-    <% } %>
-    <% if (req.query.message === "Otp created successfully") { %>
-        <span id="popup" style="color: green;"><h3><%= req.query.message%></h3></span>
-    <% } %>
-    <% if (req.query.message === "Employee added successfully") { %>
-        <span id="popup" style="color: green;"><h3><%= req.query.message%></h3></span>
-    <% } %>
-    <% if (req.query.message === "Employee removed successfully") { %>
-        <span id="popup" style="color: green;"><h3><%= req.query.message%></h3></span>
-    <% } %>
-     <% if (req.query.message === "Bot status updated successfully") { %>
-        <span id="popup" style="color: blue;"><h3><%= req.query.message%></h3></span>
     <% } %>
   <a href="/home" class="back">
     <i class="fa-solid fa-backward"></i>
@@ -62,6 +38,13 @@
       <% }) %>
     </select>
     <button type="submit">Remove</button>
+  </form>
+
+  <!-- Create Broadcast group -->
+  <form class="form-card" action="/admin-broadcast/create" method="POST">
+    <h3><i class="fa-solid fa-bullhorn"></i> Create Broadcast group </h3>
+   <input type="text" name="name" placeholder="Broadcast Group Name" required />
+    <button type="submit">Create</button>
   </form>
 
   <!-- Add New OTP -->
