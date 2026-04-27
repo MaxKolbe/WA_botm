@@ -23,6 +23,37 @@ import employeeModel from '../../models/employeeModel.model.js';
 
 // Authentication Controllers
 
+/**** */
+// Get Login Page Controller
+export const getSignupPageController = async (req: Request, res: Response) => {
+  res.render('signup', { req });
+};
+// Signup Controller
+export const postSignupPageController = async (req: Request, res: Response) => {
+  const phone = req.body.phone.toLowerCase().trim();
+  const code = Number(req.body.code.toLowerCase().trim());
+  const password = req.body.password.toLowerCase().trim();
+
+  const isEmployee = await employeeModel.findOne({
+    phone: `whatsapp:${phone}`,
+  });
+
+  if(!isEmployee){
+    return res.status(404).redirect('/signup?error=Invalid+credentials');
+  }
+
+  if(code !== Number(process.env.CODE!)){
+    return res.status(404).redirect('/signup?error=Invalid+credentials');
+  }
+
+  const hashedPassword = await bcrypt.hash(password, 10)
+  isEmployee.password = hashedPassword;
+  await isEmployee.save()
+
+  return res.status(200).redirect('/');
+};
+/**** */ 
+
 // Get Login Page Controller
 export const getLoginPageController = async (req: Request, res: Response) => {
   res.render('login', { req });
@@ -44,11 +75,11 @@ export const postLoginPageController = async (req: Request, res: Response) => {
     if (isVerified) {
       const token = signJwt(employee.id);
       res.cookie('admin', token, { httpOnly: true });
-      if(employee.isSuperAdmin === false){
+      if (employee.isSuperAdmin === false) {
         return res.status(200).redirect('/admin-broadcast');
       }
 
-      return res.status(200).redirect('/home');
+      return res.status(200).redirect('/homepagexd');
     } else {
       return res.status(404).redirect('/?error=Incorrect+password+love');
     }
@@ -173,7 +204,7 @@ export const viewEmployeeLogsController = async (
       otps: response.data!.otps,
     });
   } catch (err) {
-    res.status(500).redirect(`/home`);
+    res.status(500).redirect(`/homepagexd`);
   }
 };
 // Delete Individual Log Function

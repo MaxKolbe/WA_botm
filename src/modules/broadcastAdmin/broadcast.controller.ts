@@ -19,7 +19,7 @@ export const sendMessageController = async (
     const groupName = req.params.name!;
     const userId = req.user!.id;
     const { message } = req.body;
-    console.log(groupName, userId, message);
+    // console.log(groupName, userId, message);
     const response = await sendBroadcast(groupName, userId, message);
 
     if (response.code === 404) {
@@ -117,7 +117,7 @@ export const assignController = async (
         `/admin-broadcast/adminops/${group}?message=admin+added+to+group+${group}`,
       );
   } catch (err) {
-    console.log(err);
+    // console.log(err);
     return res
       .status(500)
       .redirect(`/admin-broadcast/adminops/${group}?error=${err}`);
@@ -164,7 +164,7 @@ export const removeMemberController = async (
     const { name, phone } = req.params;
     phoneArr.push(phone!);
     const userId = req.user!.id;
-    console.log('Phonearr', phoneArr);
+    // console.log('Phonearr', phoneArr);
 
     const response = await deleteMember(name!, phoneArr, userId);
 
@@ -178,7 +178,7 @@ export const removeMemberController = async (
     return res
       .status(200)
       .redirect(
-        `/admin-broadcast?message=Member+removed+from+group+successfully`,
+        `/admin-broadcast/view/${name}?message=Member+removed+from+group+successfully`,
       );
   } catch (err) {
     return res.status(500).redirect(`/admin-broadcast?error=${err}`);

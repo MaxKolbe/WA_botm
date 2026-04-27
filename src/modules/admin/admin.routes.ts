@@ -1,6 +1,8 @@
 import { Router } from 'express';
 import { verifyUser } from '../../middleware/authenticate.js';
 import {
+  getSignupPageController,
+  postSignupPageController,
   getLoginPageController,
   postLoginPageController,
   logOutController,
@@ -23,13 +25,15 @@ import {
 
 const adminRouter = Router();
 
+adminRouter.get('/signup', getSignupPageController);
+adminRouter.post('/signup', postSignupPageController);
 // Authentication Routes
 adminRouter.get('/', getLoginPageController);
 adminRouter.post('/login', postLoginPageController);
 adminRouter.get('/logout', verifyUser, logOutController);
 
 // Admin Home Routes
-adminRouter.get('/home', verifyUser, getHomeController);
+adminRouter.get('/homepagexd', verifyUser, getHomeController);
 adminRouter.get('/otps', verifyUser, viewOtpsController);
 adminRouter.get('/users', verifyUser, viewUsersController);
 adminRouter.post('/searchOtps', verifyUser, searchOtpsController);
