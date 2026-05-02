@@ -7,6 +7,7 @@ import botRouter from './modules/bot/bot.route.js';
 import visualizerRouter from './modules/visualizer/visualizer.routes.js';
 import broadcastAdminRouter from "./modules/broadcastAdmin/broadcast.routes.js"
 import { Request, Response, NextFunction } from 'express';
+import { initIDX } from './configs/script.js';
 
 const app = express(); 
 
@@ -19,6 +20,7 @@ app.set('view engine', 'ejs');
 app.set('views', 'views');
 
 connectToDb();
+initIDX();
 
 app.use('/', adminRouter);
 app.use('/webhook', botRouter);
@@ -27,10 +29,10 @@ app.use('/admin-broadcast', broadcastAdminRouter);
 
 // import { sendWhatsAppMessage } from './utils/botFunctions.js';
 // await sendWhatsAppMessage("whatsapp:+2347042274824", "HELLO FROM NODEJ")
- 
+  
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   console.log(`Internal Server Error: ${err.message} \n ${err.cause} \n ${err.stack}`);
-  res.status(500).json({ success: false, message: err.message });
+  res.status(500).json({ success: false, message: err.message }); 
 });
 
 export default app;

@@ -23,14 +23,15 @@ const EmployeeSchema: Schema = new Schema(
     },
     phone: {
       type: String,
+      unique: true,
     },
     isAdmin: {
       type: Boolean,
-      default: false
+      default: false,
     },
     isSuperAdmin: {
       type: Boolean,
-      default: false
+      default: false,
     },
     enabled: {
       type: Boolean,

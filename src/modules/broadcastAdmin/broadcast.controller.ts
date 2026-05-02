@@ -44,11 +44,12 @@ export const createGroupController = async (
   req: Request,
   res: Response,
   next: NextFunction,
-) => {
+) => { 
   const { name } = req.body;
   const userId = req.user!.id;
+  const isSuperAdmin = req.user!.role
   try {
-    const response = await createGroup(name, userId!);
+    const response = await createGroup(name, userId!, isSuperAdmin!);
     return res.status(201).redirect(`/adminops?message=group+${name}+created`);
   } catch (err) {
     return res.status(500).redirect(`/adminops?error=${err}`);
@@ -61,10 +62,18 @@ export const addMemberController = async (
   next: NextFunction,
 ) => {
   let phoneArr: string[] = [];
-  const { employee } = req.body;
+  const { employee, phone } = req.body;
   const group = req.params.name;
-  phoneArr.push(employee);
   const userId = req.user!.id;
+ 
+  if(employee){
+    phoneArr.push(employee);
+  }
+
+  if(phone){
+    phoneArr.push(phone);
+  }
+  // console.log(phoneArr)
 
   try {
     const response = await addMember(group!, phoneArr, userId);

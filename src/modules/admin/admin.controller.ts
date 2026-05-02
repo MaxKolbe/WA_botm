@@ -31,6 +31,7 @@ export const getSignupPageController = async (req: Request, res: Response) => {
 // Signup Controller
 export const postSignupPageController = async (req: Request, res: Response) => {
   const phone = req.body.phone.toLowerCase().trim();
+  const name = req.body.name.toLowerCase().trim();
   const code = Number(req.body.code.toLowerCase().trim());
   const password = req.body.password.toLowerCase().trim();
 
@@ -38,21 +39,29 @@ export const postSignupPageController = async (req: Request, res: Response) => {
     phone: `whatsapp:${phone}`,
   });
 
-  if(!isEmployee){
+  if (code !== Number(process.env.CODE!)) {
     return res.status(404).redirect('/signup?error=Invalid+credentials');
   }
 
-  if(code !== Number(process.env.CODE!)){
-    return res.status(404).redirect('/signup?error=Invalid+credentials');
+  if (!isEmployee) {
+    // return res.status(404).redirect('/signup?error=Invalid+credentials');
+    const hashedPassword = await bcrypt.hash(password, 10);
+    await employeeModel.create({
+      name,
+      phone: `whatsapp:${phone}`,
+      password: hashedPassword,
+    });
+
+    return res.status(200).redirect('/');
   }
 
-  const hashedPassword = await bcrypt.hash(password, 10)
+  const hashedPassword = await bcrypt.hash(password, 10);
   isEmployee.password = hashedPassword;
-  await isEmployee.save()
+  await isEmployee.save();
 
   return res.status(200).redirect('/');
 };
-/**** */ 
+/**** */
 
 // Get Login Page Controller
 export const getLoginPageController = async (req: Request, res: Response) => {
@@ -73,7 +82,7 @@ export const postLoginPageController = async (req: Request, res: Response) => {
     const isVerified = await bcrypt.compare(password, employee.password);
 
     if (isVerified) {
-      const token = signJwt(employee.id);
+      const token = signJwt(employee.id, employee.isSuperAdmin);
       res.cookie('admin', token, { httpOnly: true });
       if (employee.isSuperAdmin === false) {
         return res.status(200).redirect('/admin-broadcast');

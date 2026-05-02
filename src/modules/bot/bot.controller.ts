@@ -78,22 +78,28 @@ export const botRequests = async (req: Request, res: Response) => {
 
     // Handle first-time message
     if (user.firsttime === true && !otpElement) {
-      res.send(`
+            res.send(`
 <Response>
   <Message> 
-Hi there 👋
-
-Welcome to NenBot! Here's how it works:
-
-Please enter a *phrase* to receive your one-time password (OTP).
-
-You can request up to 3 OTPs. After that, you'll need to wait for a period of time before trying again.
-
-Otps are valid for only 30secs. 
-
-If you message NenBot and you don't get a reply within a minute (NenBot is NOT disabled or you have NOT reached your usage limits), please resend your message to make sure it goes through.
+Hi. Thank you for choosing to continue recieving announcements. Always remember to send a thumbs up when you receive one.
   </Message>
 </Response>`);
+//       res.send(`
+// <Response>
+//   <Message> 
+// Hi there 👋
+
+// Welcome to NenBot! Here's how it works:
+
+// Please enter a *phrase* to receive your one-time password (OTP).
+
+// You can request up to 3 OTPs. After that, you'll need to wait for a period of time before trying again.
+
+// Otps are valid for only 30secs. 
+
+// If you message NenBot and you don't get a reply within a minute (NenBot is NOT disabled or you have NOT reached your usage limits), please resend your message to make sure it goes through.
+//   </Message>
+// </Response>`);
 
       user.firsttime = false;
       user.firsttimeResetAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
@@ -231,7 +237,16 @@ export const broadcastController = async (req: Request, res: Response) => {
       ?.trim();
     console.log(broadcastActions.CREATEGROUP, ':', groupName);
     try {
-      const response = await createGroup(groupName!, user?.id);
+      const response = await createGroup(
+        groupName!,
+        user?.id,
+        user!.isSuperAdmin,
+      );
+      if (response.code === 403) {
+        return res.send(
+          `<Response><Message> ${response.message}</Message></Response>`,
+        );
+      }
       return res.send(
         `<Response><Message>${response.message}</Message></Response>`,
       );
@@ -328,10 +343,10 @@ export const broadcastController = async (req: Request, res: Response) => {
   } else if (broadcastAction.startsWith(broadcastActions.VIEWALLGROUPS)) {
     try {
       const response = await viewAllGroups(user!.isSuperAdmin);
-      if(response.code === 403){
+      if (response.code === 403) {
         return res.send(
-        `<Response><Message> ${response.message}</Message></Response>`,
-      );
+          `<Response><Message> ${response.message}</Message></Response>`,
+        );
       }
       return res.send(
         `<Response><Message>Active groups: ${response.data}</Message></Response>`,

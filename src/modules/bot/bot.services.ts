@@ -121,10 +121,21 @@ export const sendBroadcast = async (
   };
 };
 
-export const createGroup = async (groupName: string, userId: string) => {
+export const createGroup = async (
+  groupName: string,
+  userId: string,
+  isSuperAdmin: boolean,
+) => {
+  if (isSuperAdmin === false) {
+    return {
+      code: 403,
+      message: 'You are unauthorized to create a group',
+    };
+  }
+
   await groupModel.create({
     name: groupName,
-    admins: [userId, superid1, superid2],
+    admins: [superid1, superid2], //admins: [userId, superid1, superid2], --> if users can create
   });
 
   return {
@@ -155,6 +166,22 @@ export const addMember = async (
   newMembers.forEach((newMember) => {
     employeePhones.push(`whatsapp:${newMember}`);
   });
+
+  //create new users if they did not already exist
+  await employeeModel.bulkWrite(
+    employeePhones.map((employeePhone, index) => ({
+      updateOne: {
+        filter: { phone: employeePhone },
+        update: {
+          $setOnInsert: {
+            name: `User ${index + 1}`, // generate unique name however you want
+            phone: employeePhone,
+          },
+        },
+        upsert: true,
+      },
+    })),
+  );
 
   //query employee collection while avoiding n+1
   const employees = await employeeModel.find({
@@ -224,7 +251,7 @@ export const removeGroupAdmin = async (
 
   await groupModel.updateOne(
     { name: groupName, admins: { $in: userId } },
-    { $pull: { admins: { $in: employeeIds } } }
+    { $pull: { admins: { $in: employeeIds } } },
   );
 
   // check if user is admin in other groups
@@ -251,7 +278,7 @@ export const deleteGroup = async (groupName: string, userId: string) => {
     name: groupName,
     admins: { $in: userId },
   });
-  console.log(userId);
+  // console.log(userId);
 
   if (!group) {
     return {

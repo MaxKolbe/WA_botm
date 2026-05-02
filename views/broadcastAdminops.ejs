@@ -16,16 +16,23 @@
     <% if (req.query.message) { %>
         <span id="popup" style="color: green;"><h3><%= req.query.message%></h3></span>
     <% } %>
+    <a href="/admin-broadcast" class="back">
+    <i class="fa-solid fa-backward"></i>
+    <p>Go Back</p>
+  </a>
 
   <!-- Add Member to Group-->
   <form class="form-card" action="/admin-broadcast/addMember/<%=group.name%>" method="POST">
     <h3><i class="fa-solid fa-user-plus"></i> Add Member to <%=group.name%></h3>
-    <select name="employee" id="employee" required>
+    <select name="employee" id="employee">
       <option value="">-- Select an Employee --</option>
       <% employees.forEach(emp => { %>
         <option value="<%= emp.phone.split("whatsapp:")[1] %>"><%= emp.name %></option>
       <% }) %>
     </select>
+    <p>OR</p>
+    <label for="phone" style="font-size: 12px; color: red;">Please only use this textbox if the employee cannot be found on the list</label>
+    <input type="text" id="phone" name="phone" placeholder="Phoneno i.e +2349081124724" />
     <button type="submit">Add Member</button>
   </form>
 

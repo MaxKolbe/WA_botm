@@ -6,7 +6,7 @@ dotenv.config();
 declare global {
   namespace Express {
     interface Request {
-      user?: { id: string};
+      user?: { id: string, role?: boolean};
     }
   }
 }
@@ -27,7 +27,7 @@ export const verifyUser = (req: Request, res: Response, next: NextFunction) => {
             .status(500)
             .redirect('/?error=Error+authenticating+user+Login+again');
         } else {
-          req.user = {id: decoded.id }
+          req.user = {id: decoded.id, role: decoded.role }
           next();
         }
       },
